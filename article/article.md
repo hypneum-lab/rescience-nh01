@@ -24,26 +24,35 @@ which equals $J$ at $t = 0$ and tends to the projection (pseudo-inverse) rule
 of Kanter and Sompolinsky [@kanter1987projector] as $t \to \infty$. The
 article's statistical-mechanics analysis predicts that the critical storage
 load $\alpha_c(t)$ rises from the Amit–Gutfreund–Sompolinsky value
-$\approx 0.138$ at $t = 0$ towards the theoretical bound $\alpha = 1$, that
+[@amit1985storing] $\approx 0.138$ at $t = 0$ towards the theoretical bound $\alpha = 1$, that
 spurious (mixture) attractors are removed, that pure patterns are reinforced,
 and that the gain is robust to thermal noise. The original Monte Carlo
-checks (Section 2.5 of the published article) use single-spin-flip Glauber
-dynamics on networks of $N = 5\,000$ neurons averaged over $M = 10$ pattern
-realisations for the magnetisation curves (their Fig. 7, loads $P/N \in
-\{0.02, 0.08, 0.32\}$, $t \in \{0, 0.1, 1, 10, 100, 1000\}$), a finite-size
-comparison at $N \in \{500, 1\,000, 5\,000\}$ (their Fig. 8), and
-$N = 1\,000$, $P = 50$ for the internal-field and basin analyses (their
-Figs. 9–10; 200 zero-noise evolutions for each of 200 pattern realisations
-for the basins). The replica-symmetric capacity rises from
+checks (Section 2.5 of the published article) use, for the magnetisation
+curves, single-spin-flip Glauber dynamics measured after equilibration on
+networks of $N = 5\,000$ neurons averaged over $M = 10$ pattern realisations
+(their Fig. 7, loads $P/N \in \{0.02, 0.08, 0.32\}$, $t \in \{0, 0.1, 1, 10,
+100, 1000\}$) and a finite-size comparison at $N \in \{500, 1\,000,
+5\,000\}$ (their Fig. 8). The zero-noise internal-field and basin analyses
+(their Figs. 9–10) use the *parallel* sign update of their Eq. (2.17) at
+$N = 1\,000$, $P = 50$: 20 evolutions for each of 20 pattern realisations for
+the fields (Fig. 9), 200 evolutions for each of 200 realisations for the
+basins (Fig. 10), the cue being the first pattern with each bit flipped
+independently with probability $p$ and success being declared when that
+pattern carries the largest Mattis overlap. The replica-symmetric capacity rises from
 $\alpha_c(0) \simeq 0.138$ to $\alpha_c \simeq 1.07$ as $t \to \infty$,
 the excess over Gardner's bound being attributed to replica-symmetry
 breaking. No capacity curve is measured by Monte Carlo in the original: the
 simulations verify magnetisations, fields and basins against the theory.
 
-We replicate these qualitative claims with an independent NumPy
-implementation at finite size ($N \le 1\,000$), a different, noisy-cue
-capacity estimator, new random seeds, and a design pre-registered and frozen
-by annotated git tags before any run. The replication was carried out inside
+We independently implement the published kernel and *partially*
+replicate its qualitative claims at finite size ($N \le 1\,000$) with a new,
+noisy-cue capacity estimator and new random seeds: we test the retrieval
+gain, the removal of spurious final states, the robustness to thermal noise
+and the projector limit, and we do not reproduce the replica-symmetric
+capacity curve nor the original Monte Carlo figures. Each of the three
+studies was pre-registered and frozen by an annotated git tag before its own
+main run; the later registrations were informed by the preceding studies
+(Section "Pre-registration"). The replication was carried out inside
 the Hypneum Lab research programme (issue hypneum-lab/nerve-wml#68), where the
 dreaming kernel serves as a reference operation; the replication stands on
 its own and makes no claim about that programme.
@@ -76,12 +85,13 @@ with a stored pattern.
 Our code (`experiments/nh01_hopfield_dream/{run,confirmatory,correlated}.py`,
 713 + 384 + 237 lines, NumPy only, no original code reused) computes $J(t)$
 by spectral decomposition of the symmetric $J$ (`numpy.linalg.eigh`, negative
-numerical eigenvalues clipped to 0). Ten unit tests check that $J(0) = J$,
-that the spectral form equals the pattern-space closed form on 2-pattern and
-many-pattern cases, that $t = 10^{6}$ reproduces the projector, and that the
-matched shrink is exactly inert at zero temperature
-[`tests/unit/test_nh01_hopfield_dream.py`]; ten more cover the confirmatory
-and correlated runners.
+numerical eigenvalues clipped to 0). Twenty test functions (23 executed
+cases) check that $J(0) = J$, that the spectral form equals the pattern-space
+closed form on 2-pattern and many-pattern cases, that $t = 10^{8}$
+approximates the projector within the tested tolerance, that the matched
+shrink is exactly inert at zero temperature
+[`code/tests/test_nh01_hopfield_dream.py`], and cover the confirmatory and
+correlated runners.
 
 The diagonal $J_{ii}$ is set to 0 in every arm before the dynamics. The
 dynamics are asynchronous with one fresh random permutation of the $N$ units
@@ -95,14 +105,19 @@ with $P(s_i = +1) = 1/(1+e^{-2\beta h_i})$, $\beta = 5$, 40 sweeps, overlap
 averaged over the last 10.
 
 Cue: a stored pattern with exactly $\operatorname{round}(0.10\,N)$ bits
-flipped (overlap 0.80). Probes: the first $\min(P, 32)$ stored patterns.
+flipped (overlap 0.80 at $N = 1\,000$; 0.8125, 0.797, 0.797 at $N = 64$,
+128, 256 because of rounding). Probes: the first $\min(P, 32)$ stored
+patterns.
 Final states are classified as `retrieved` ($m \ge 0.9$; $0.8$ at
 $T = 0.2$), `other_stored` or `spurious`. Capacity estimator per
-(arm, seed): $\hat\alpha_c$ is the load at which the piecewise-linear
-retrieval fraction $r(\alpha)$ crosses 0.5 on the grid
+(arm, seed): $\hat\alpha_c$ is the linearly interpolated 0.5 crossing
+of the retrieval fraction $r(\alpha)$ immediately after the *last* grid load
+with $r \ge 0.5$, on the grid
 $\alpha \in \{0.04, 0.06, \dots, 0.20, 0.25, \dots, 0.95\}$ (24 values;
-0.01 and 0.02 added for the correlated run), censored at 0.95, flagged
-`below_grid` when $r < 0.5$ at the lowest load. Patterns are nested in
+0.01 and 0.02 added for the correlated run). If the largest load still has
+$r \ge 0.5$ the estimate is right-censored at 0.95; if no load reaches 0.5
+the code records the flag `below_grid` and a zero sentinel, which marks
+censoring, not a measured zero capacity. Patterns are nested in
 $\alpha$ and the same patterns, cues and update orders are used for every
 arm of a cell (paired design). Statistics are paired per-seed ratios and
 differences, mean over 10 seeds with a 95 % percentile bootstrap CI (10 000
@@ -113,12 +128,17 @@ seed-level resamples, bootstrap seed 20261025). Every random draw comes from
 
 For each $t > 0$, $J_c = c(t)\,J$ with
 $c(t) = \|\mathrm{offdiag}\,J(t)\|_F / \|\mathrm{offdiag}\,J\|_F$, i.e.
-equal global synaptic budget. Two facts are theorems and were declared before
-any run so that the control cannot be misread: at $T = 0$ the sign dynamics
-is invariant under $c > 0$, so the control must give a ratio of exactly 1
-(implementation check); at $T > 0$, $J_c$ at inverse temperature $\beta$
-equals $J$ at $c\beta$, so a shrink $c < 1$ is a heating and cannot raise
-capacity. The empirical control is therefore read at $T = 0.2$.
+equal global synaptic budget; $c$ depends on $t$, $\alpha$, $N$ and the
+seed, and all observed values lie in $[0.09, 0.999]$. Two facts were declared
+before any run so that the control cannot be misread: at $T = 0$ the sign
+dynamics is invariant under $c > 0$, so the control must give a ratio of
+exactly 1 (an implementation check, not an empirical hypothesis); at $T > 0$,
+$J_c$ at inverse temperature $\beta$ has the same transition probabilities as
+$J$ at $c\beta$, i.e. the control is the Hebbian network at temperature
+$T/c$. This identity does not impose a deterministic inequality on a
+finite-time, thresholded, single-realisation capacity estimate (in the pilot,
+seed 6 at $N = 256$, $T = 0.2$ gives a shrink ratio of 1.012), so the effect
+at $T = 0.2$ is measured empirically.
 
 ## Correlated patterns (added)
 
@@ -155,6 +175,15 @@ reduced by $\ge 50$ %. **C4** (correlated run): paired difference
 $R(m = 0.30) - R(m = 0)$ with CI excluding 0. Seeds whose Hebbian
 $\hat\alpha_c$ is below the grid have an undefined ratio.
 
+These are the confirmatory and correlated criteria. The pilot registration
+used the original C2 (monotonicity of the median curve, tolerated decrease
+0.05 per grid step), C3 at $T = 0$ only, and P4 at loads 0.10 and 0.14; the
+confirmatory amendment replaced C2 by C2′ and moved C3 to $T = 0.2$ after
+the pilot had been observed, and the correlated registration was written
+after both independent-pattern studies. The pilot's median curve decreases
+from 0.600 to 0.522 between $t = 10$ and $t = 100$ and passed C2 only because
+no single step exceeded 0.05.
+
 ## What was changed with respect to the original, and why
 
 1. Finite $N \le 1\,000$ and an empirical, noisy-cue, 0.5-crossing capacity
@@ -163,12 +192,21 @@ $\hat\alpha_c$ is below the grid have an undefined ratio.
    replication tests ratios and qualitative claims (gain, spurious removal,
    projector limit).
 2. Self-coupling removed ($J_{ii} = 0$) in all arms: standard for retrieval
-   dynamics, but it affects zero-temperature dynamics through the self-field
-   and is responsible for the finite optimum in $t$ reported below.
-3. Matched shrink control and correlated patterns: additions, not changes.
-4. Numbers fixed before any run (grids, seeds, thresholds); one voided
-   launch (BLAS thread oversubscription, killed after ~150 s before any
-   output was read, log kept in `results/nh01/run-aborted-blas-threads.log`).
+   dynamics; it changes the update fields relative to the original rule,
+   whose field sums over $j = 1 \dots N$. We did not run an ablation with the
+   diagonal kept, so its contribution to the finite optimum in $t$ reported
+   below is not isolated.
+3. Dynamics and success criterion: asynchronous updates instead of the
+   original parallel sign update (their Eq. 2.17); a fixed number of
+   flipped cue bits, $\operatorname{round}(0.10\,N)$, instead of independent
+   flips with probability $p$; an absolute overlap threshold (0.9, or 0.8 at
+   $T = 0.2$) instead of "largest Mattis overlap"; at $T = 0.2$, a fixed
+   40-sweep window without an equilibration diagnostic.
+4. Matched shrink control and correlated patterns: additions, not changes.
+5. Parameters and decision rules fixed before each study's main run (grids,
+   seeds, thresholds); one voided launch of the pilot (BLAS thread
+   oversubscription, killed after ~150 s before the main run, log kept in
+   `results/nh01/run-aborted-blas-threads.log`).
 
 # Results
 
@@ -193,9 +231,11 @@ Confirmatory [`results/nh01_confirmatory/summary.json`], $N = 1\,000$,
 
 At $T = 0.2$ the dreaming gain persists: ratio 3.58 [3.53, 3.64] at
 $t = 10$, 3.62 [3.55, 3.68] at $t = 7$. The Hebbian estimate falls with
-size (0.211, 0.179, 0.175, 0.157 for $N$ = 64, 128, 256, 1 000) towards the
-thermodynamic 0.138 while the dreamed capacity stays $\approx 0.60$; the
-ratio grows for that reason.
+size (0.211, 0.179, 0.175, 0.157 for $N$ = 64, 128, 256, 1 000; the
+thermodynamic value is 0.138) while the dreamed capacity stays
+$\approx 0.60$; the ratio grows for that reason. At loads 0.14 and 0.20 no
+dream $t = 10$ probe is classified as spurious; at higher loads some are
+(e.g. all 32 at $\alpha = 0.8$, seed 0), so the claim is load-specific.
 
 ![NH-01 confirmatory run, $N = 1\,000$, seeds 0–9 (`results/nh01_confirmatory/figure.png`, byte-identical on the provenance re-run). (a) Empirical capacity $\hat\alpha_c$ versus dreaming time $t$ for the dreamed kernel (circles) and the matched uniform-shrink control (squares) at $T = 0$ (solid) and $T = 0.2$ (dashed); the horizontal lines are the Hebbian reference; the dotted vertical line marks $t^* = 7$. (b) Retrieved fraction versus load $\alpha$ at $T = 0$ for Hebb, dream $t = 10$, dream $t^* = 7$ and shrink $c(10)$. (c) Fraction of spurious final states versus load at $T = 0$. (d) Capacity ratio to Hebb with seed-level 95 % bootstrap intervals; the dotted lines are the pre-registered thresholds 3.0 (confirmation) and 1.1 (control).](figures/figure-confirmatory.png){#fig:confirmatory width=100%}
 
@@ -208,34 +248,41 @@ ratio grows for that reason.
 |---|---|---|---|---|---|---|---|
 | 0 (0) | 0.160 [0.158, 0.162] | 0.611 [0.606, 0.616] | **3.82 [3.77, 3.88]** — confirmed | 7 (seeds: 5–10); drop 0.084 [0.079, 0.089] — holds | 0.127 [0.125, 0.129] | **0.979 [0.974, 0.984]** — holds | **confirmed** |
 | 0.15 (0.0225) | 0.068 [0.066, 0.070] | 0.616 [0.612, 0.619] | **9.06 [8.84, 9.29]** — confirmed | 7 (7–10); drop 0.088 [0.085, 0.090] — holds | 0.054 [0.053, 0.056] | **0.986 [0.979, 0.993]** — holds | **confirmed** |
-| 0.30 (0.09) | 0.014 [0.014, 0.015] (all seeds between loads 0.01 and 0.02) | 0.636 [0.633, 0.639] | **not computable** (denominator at the grid floor; the summary's value is not cited) | 10 (7–10); drop 0.103 [0.098, 0.108] — holds | 0.007 [0.003, 0.011]; **5/10 seeds below grid** ($\hat\alpha_c = 0$) | **not computable** (per-seed ratios 1, 0, 1, 1, 0 on the 5 defined seeds, undefined on 5) | **inconclusive** |
+| 0.30 (0.09) | 0.014 [0.014, 0.015] (all seeds between loads 0.01 and 0.02) | 0.636 [0.633, 0.639] | computable but **not retained** (all ten denominators positive, bracketed by loads 0.01–0.02; registered estimate reported in the data) | 10 (7–10); drop 0.103 [0.098, 0.108] — holds | 0.007 [0.003, 0.011]; **5/10 seeds below grid** (zero sentinel = censored) | **undefined on 5 seeds**; 0.6 [0.2, 1.0] on the 5 defined seeds (per-seed 1, 0, 1, 1, 0) | **inconclusive** (after analysis) |
 
-Reading rule for $m = 0.30$: a ratio whose denominator sits at the load-grid
-floor is reported as *not computable*, not as a number (Hypneum Lab
-null-reporting rule 10). The absolute capacities are the robust reading: the
+Reading rule for $m = 0.30$. At $T = 0$ all ten Hebbian crossings are
+bracketed by the loads 0.01 and 0.02 (flags `ok`), so the registered ratio is
+defined, but its magnitude is set by the interpolation inside that interval
+and is not retained for quantitative interpretation. At $T = 0.2$ five
+Hebbian estimates are below the grid and their ratios are undefined; the
+control statistic in the data uses only the five defined seeds. The
+absolute capacities are the robust reading: the
 dreamed capacity barely moves with correlation (0.611, 0.616, 0.636) while
 the Hebbian capacity collapses (0.160, 0.068, 0.014), so the paired absolute
 gain grows 0.451 [0.445, 0.456] → 0.548 [0.543, 0.552] → 0.621 [0.618,
 0.625]. The tagged code labels C3′ "holds" and the level "confirmed" in
-`summary.json`, computed on the five defined seeds; this article overrides
-that label (PI ruling 2026-10-30, commit `5884927`), because at $T = 0.2$ the
-cell cannot discriminate shrink from Hebb: Hebbian retrieval is essentially
-gone, and since $c(t) < 1$ by construction the theorem gives $S \le 1$, so
-C3′ could not have refuted anything there. The pre-registered below-grid
-rule was written for C1 only; a future amendment should extend it to C3′ and
-the load grid below 0.01.
+`summary.json`, computed on the five defined seeds. This article reports
+the level as inconclusive instead: the decision was taken after the analysis
+(2026-10-30, commit `5884927`) and is a methodological reservation, not a
+registered rule. Its ground is censoring and sub-sample selection: with
+Hebbian retrieval essentially gone at $T = 0.2$, a five-seed control cannot
+discriminate shrink from Hebb. The registered labels are kept unchanged in
+the raw outputs. The pre-registered below-grid rule was written for C1 only;
+a future amendment should extend it to C3′ and the load grid below 0.01.
 
-C4 trend: $R(0.30) - R(0)$ = 40.6 [38.7, 43.2], label `gain_increases`,
-but its magnitude inherits the non-robust $m = 0.30$ denominator; the
-direction, not the value, is the finding. P4 holds at every level (0 spurious
+C4 trend: the registered estimate is $R(0.30) - R(0)$ = 40.6 [38.7,
+43.2], label `gain_increases`. Its magnitude depends on the interpolation of
+the small Hebbian denominator at $m = 0.30$ and the interval does not
+account for load-grid resolution; we retain the increasing direction as a
+descriptive result only. P4 holds at every level (0 spurious
 final states under dreaming at $\alpha \in \{0.14, 0.20\}$); the $T = 0$
 exactness check passed at every level. $m = 0$ reproduces the independent-
 pattern run on new seeds (3.82 vs 3.86; $t^* = 7$ in both; shrink 0.979 vs
 0.975).
 
-![NH-01 correlated-pattern run, $N = 1\,000$, seeds 100–109 (`results/nh01_correlated/figure.png`). (a, b) Capacity ratio to Hebb versus dreaming time at $T = 0$ and $T = 0.2$ for ancestor overlap $m \in \{0, 0.15, 0.30\}$ (dream: circles; matched shrink: squares). (c) Capacity versus $t$ at $T = 0$ (leftmost point: Hebb). The figure is the unmodified output of the tagged code, whose automatic labels read "confirme" for all three levels and draw a ratio curve for $m = 0.30$; as explained in the text, the $m = 0.30$ level is reported as inconclusive (Hebbian reference at the floor of the load grid at $T = 0$, control not computable at $T = 0.2$) and its ratio curve must not be read as a result.](figures/figure-correlated.png){#fig:correlated width=100%}
+![NH-01 correlated-pattern run, $N = 1\,000$, seeds 100–109 (`results/nh01_correlated/figure.png`). (a, b) Capacity ratio to Hebb versus dreaming time at $T = 0$ and $T = 0.2$ for ancestor overlap $m \in \{0, 0.15, 0.30\}$ (dream: circles; matched shrink: squares). (c) Capacity versus $t$ at $T = 0$ (leftmost point: Hebb). The figure is the unmodified output of the tagged code, whose automatic labels read "confirme" for all three levels and draw a ratio curve for $m = 0.30$; as explained in the text, the $m = 0.30$ level is reported as inconclusive: at $T = 0$ its ratio is defined but set by the 0.01–0.02 load interval, and at $T = 0.2$ five of its ten Hebbian denominators are below the grid, so the $m = 0.30$ ratio curves must not be read as a result; the absolute capacities of panel (c) are the robust reading.](figures/figure-correlated.png){#fig:correlated width=100%}
 
-## Internal reproduction (bit-exact)
+## Internal reproduction of the $N = 1\,000$ studies
 
 Both $N = 1\,000$ runs were re-executed on 2026-10-30 from a fresh clone
 checked out at the tag, with the SHA-256 of the executed files checked
@@ -252,35 +299,47 @@ confirmatory run; the worker count changes only the scheduling.
 
 # Conclusion
 
-Under rules fixed before any run, the replication **confirms** the central
-qualitative claims of Fachechi, Agliari and Barra: the dreamed kernel raises
-the storage capacity of the Hopfield network by a large factor (3.4–3.9 at
-$t = 10$ for independent patterns, $N$ = 256 to 1 000), removes spurious
-final states where the Hebbian network has almost only spurious ones, keeps
-its advantage under thermal noise, and behaves as the projector rule for
-large $t$ (every stored pattern is a fixed point up to $\alpha = 0.95$ for
-$t \ge 10$ in the pilot's stability arm). On correlated patterns the gain
+Under decision rules fixed before each study's main run, this partial
+replication **supports** the central qualitative claims of Fachechi, Agliari
+and Barra within our finite-size protocol: the dreamed kernel raises the
+empirical storage capacity of the Hopfield network by a large factor
+(3.4–3.9 at $t = 10$ for independent patterns, $N$ = 256 to 1 000), leaves
+no probe classified as spurious at loads 0.14 and 0.20 where the Hebbian
+network has almost only spurious final states (which does not establish the
+absence of spurious attractors elsewhere in state space), keeps its
+advantage under thermal noise, and behaves as the projector rule for large
+$t$ (the pilot's $f = 0$ capacity estimate is right-censored at $\alpha =
+0.95$ for $t \ge 10$ — a 50 %-retrieval criterion on at most 32 probed
+patterns, not a test that every stored pattern is a fixed point). The ratios
+3.86 and 9.06 are results of this study, not numbers published in 2019. On
+correlated patterns the gain
 grows with correlation at $m \le 0.15$, consistent with the projector
 limit's insensitivity to pattern correlations.
 
 Two points go beyond, or qualify, the original. First, the added control
-shows that no uniform rescaling of the Hebbian couplings at equal synaptic
-budget reproduces the gain: it is inert at $T = 0$ by theorem and lowers
-capacity by 2–3 % at $T = 0.2$, as a heating must. The dreaming effect is a
-change of the attractor landscape, not a downscaling. Second, with the
+shows that the Frobenius-matched uniform rescalings of the Hebbian couplings
+tested here do not reproduce the gain: they are inert at $T = 0$ by scale
+invariance and lower the mean empirical capacity by 2.52 % at $T = 0.2$
+(seed-bootstrap 95 % interval 1.80–3.35 %). The dreaming effect is a
+spectral change of the attractor landscape, not a global downscaling at
+equal synaptic budget. Second, with the
 self-coupling removed and a noisy cue, the finite-size capacity is not
 monotone in $t$: it peaks at $t^* = 7$ and loses 0.088 [0.082, 0.092] by
-$t = 100$. This does not contradict the mean-field $\alpha_c(t)$, which
-concerns the stability of the stored patterns (our stability arm is
-censored at the grid maximum, in agreement), but it shows that basins of
-attraction shrink in the projector limit at $N = 1\,000$ — a known property
-of the pseudo-inverse rule that the original analysis does not quantify.
+$t = 100$. This does not contradict the mean-field $\alpha_c(t)$: our
+noisy-cue threshold differs from the equilibrium retrieval boundary of the
+theory (our $f = 0$ arm is censored at the grid maximum, in agreement). We
+observe a lower empirical capacity at $t = 100$ than at the grid optimum
+$t = 7$ without measuring basin sizes or isolating the cause (self-coupling
+removal, cue noise, asynchronous dynamics, finite $N$). The original article
+does quantify retrieval basins, at $N = 1\,000$ and $\alpha = 0.05$ under
+parallel zero-noise dynamics, and finds them stabilised by dreaming; that
+experiment does not cover our higher-load protocol.
 
 What this replication cannot settle: absolute capacities (finite-size,
 estimator-dependent), temperatures other than 0 and 0.2, correlation
 structures other than a single ancestor, and the $m = 0.30$ level, where the
-Hebbian reference falls below the load grid and the control is not
-computable. A scale sweep (nerve-wml#90) is open and not included here.
+Hebbian reference sits at the lower limit of the load grid at $T = 0$ and
+below it on five seeds at $T = 0.2$. A scale sweep (nerve-wml#90) is open and not included here.
 
 # Reproducibility
 
@@ -290,8 +349,8 @@ computable. A scale sweep (nerve-wml#90) is open and not included here.
   runners). SHA-256 at tag: `run.py` `35f69477…`, `confirmatory.py`
   `d19aa6d0…`, `correlated.py` `8f269de6…`
   [`results/nh01_correlated/provenance-rerun-20261030/code_sha256_at_tag.txt`].
-  Submission repository: https://github.com/hypneum-lab/rescience-nh01 (to be
-  created), MIT.
+  Submission repository: https://github.com/hypneum-lab/rescience-nh01,
+  MIT.
 - **Software Heritage**: snapshot
   `swh:1:snp:01242c8b5873518a503b84a80ce3a302bb69b8a8` (visit
   2026-10-29T10:55:51Z); revisions
@@ -313,9 +372,13 @@ computable. A scale sweep (nerve-wml#90) is open and not included here.
   - `python -m experiments.nh01_hopfield_dream.correlated --workers 2 --out results/nh01_correlated`
     — seeds 100–109, started 2026-10-27T16:48:06Z, 22 866 s, 29 640 cells;
     re-run: 30 547 s.
-  - `python -I compare_nh01.py <committed_dir> <rerun_dir> comparison.json`
-    for the cell-by-cell comparison; `--analyze-only` recomputes
-    `summary.json` and `figure.png` from an existing `cells.jsonl`.
+  - `gzip -k <rerun_dir>/cells.jsonl` (the runners write the uncompressed
+    file, the comparator reads `cells.jsonl.gz`), then
+    `python -I compare_nh01.py <committed_dir> <rerun_dir> comparison.json`
+    for the cell-by-cell comparison and a reading of its `keys_equal` and
+    `summary_equal_excl_run_meta` fields (the script does not set a failure
+    exit status); `--analyze-only` recomputes `summary.json` and
+    `figure.png` from an existing `cells.jsonl`.
 - **Seeds**: root 20261025; per-seed streams keyed by (seed, N, load,
   purpose); bootstrap seed 20261025, 10 000 resamples.
 - **Artefacts** (`SHA256SUMS` in each directory): `results/nh01/`,
@@ -327,8 +390,13 @@ computable. A scale sweep (nerve-wml#90) is open and not included here.
   tags and the SWH snapshot `swh:1:snp:01242c8b…` above.
 - **For reviewers**: unit tests run in seconds; the pilot in ~26 min on
   8 cores; the two $N = 1\,000$ runs in 2–8 h depending on workers.
-  Expected outputs are the committed `summary.json` files; `figure.png`
-  must be byte-identical and every cell must match except `task_seconds`.
+  Expected outputs are the committed `summary.json` files. The two
+  $N = 1\,000$ studies were reproduced on the original host with exact
+  non-timing cell values and identical figure files; on another platform,
+  cell keys and discrete outcomes (classifications, flags, sweeps) should
+  match exactly and floating-point diagnostics (`c_fro`, `energy_own`) to
+  about $10^{-12}$, while PNG byte identity is not required. The pilot is not
+  covered by the internal re-run.
 
 # References
 

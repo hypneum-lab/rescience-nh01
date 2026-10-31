@@ -38,6 +38,7 @@ pip install -r requirements.txt
 PYTHONPATH=. python -m pytest tests/          # seconds
 ./run.sh confirmatory 4                       # ~2 h on the reference host
 ./run.sh correlated 2                         # ~6.5 h on the reference host
+gzip -k results/nh01_confirmatory/cells.jsonl   # the comparator reads cells.jsonl.gz
 python -I scripts/compare_nh01.py ../data/nh01_confirmatory results/nh01_confirmatory cmp.json
 ```
 
@@ -59,4 +60,6 @@ grid for implementation checks.
 electron-server: 8 × Intel Xeon X5680 (2010, no AVX), Linux 6.8.0-136,
 `nice 19`, shared with other jobs (load 6–7 at launch). The wall times are
 upper bounds for a dedicated modern machine. Results must match `data/` on
-every cell except `task_seconds`; `figure.png` must be byte-identical.
+every cell key and discrete outcome, and on floating-point diagnostics to
+about 1e-12; `figure.png` byte identity held on the original host but is
+not required elsewhere.

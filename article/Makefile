@@ -17,6 +17,9 @@ article: article.pdf
 metadata.tex: metadata.yaml
 	./yaml-to-latex.py -i $< -o $@
 
+content.tex: article.md md2tex.sh
+	bash md2tex.sh
+
 
 # MAIN LATEXMK RULE
 # -----------------------------------------------------------------------------

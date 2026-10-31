@@ -4,8 +4,8 @@ Independent NumPy replication of the dreaming (Hebbian-unlearning) kernel of
 Fachechi, Agliari & Barra, *Neural Networks* 112 (2019) 24–40,
 DOI [10.1016/j.neunet.2019.01.006](https://doi.org/10.1016/j.neunet.2019.01.006)
 (arXiv:1810.12217), with a pre-registered design, a matched uniform-shrink
-control, correlated patterns, and a bit-exact provenance re-run of every
-committed artefact.
+control, correlated patterns, and an internal provenance re-run of both
+$N = 1\,000$ studies.
 
 Author: Clément Saillant (Hypneum Lab, ORCID
 [0000-0002-8414-185X](https://orcid.org/0000-0002-8414-185X)).
@@ -15,8 +15,9 @@ Status: **draft, not yet submitted** (ReScience C issue to be opened on
 Headline: dreaming at $t = 10$ multiplies the empirical capacity by
 3.86 [3.79, 3.93] at $N = 1\,000$ (confirmed), 9.06 [8.84, 9.29] on correlated
 patterns with ancestor overlap $m = 0.15$ (confirmed), and the $m = 0.30$
-level is reported as **inconclusive / not computable** (Hebbian reference
-below the load grid, control ratio undefined). The matched uniform-shrink
+level is reported as **inconclusive** (Hebbian reference at the lower limit
+of the load grid at $T = 0$, below it on five seeds at $T = 0.2$, control
+ratio undefined there). The matched uniform-shrink
 control is exactly inert at $T = 0$ and lowers capacity by 2.5 per cent at
 $T = 0.2$. Both $N = 1\,000$ runs were reproduced bit-exactly from a clean
 clone at the tagged commit (9 120/9 120 and 29 640/29 640 cells).
@@ -81,6 +82,7 @@ PYTHONPATH=. python -m pytest tests/        # 20 tests, seconds
 ./run.sh confirmatory 4                     # N = 1 000, seeds 0-9: 6 951 s on the reference host
 ./run.sh correlated 2                       # N = 1 000, seeds 100-109: 22 866 s on the reference host
 ./run.sh pilot 4                            # optional, N <= 256: 1 547 s
+gzip -k results/nh01_confirmatory/cells.jsonl   # the comparator reads cells.jsonl.gz
 python -I scripts/compare_nh01.py ../data/nh01_confirmatory results/nh01_confirmatory cmp.json
 ```
 
@@ -94,8 +96,9 @@ correlated run adds ~6 h. `--analyze-only` recomputes `summary.json` and
 Determinism: every random stream is `numpy.random.default_rng([20261025, seed, N, <stream id>])`;
 the bootstrap uses seed 20261025 with 10 000 resamples. The worker count
 only changes scheduling. Expected outputs: the committed `summary.json`;
-`figure.png` must be byte-identical and every cell must match except
-`task_seconds`.
+cell keys and discrete outcomes must match exactly and floating-point
+diagnostics to about 1e-12; `figure.png` byte identity is not required on
+another platform (it held on the original host).
 
 ## Build the article
 
@@ -106,8 +109,8 @@ cd article && make          # xelatex + biber; needs Python 3 + PyYAML (yaml-to-
 `content.tex` is generated from `article.md` by `article/md2tex.sh` (pandoc
 3.12, `--biblatex`, `\autocite` → `\supercite`, drops the References section);
 rerun it after editing `article.md`. Build checked 2026-10-31 with
-TeX Live 2026 (XeLaTeX): 8 pages, no LaTeX error; biber could not run on the
-build machine, so the reference list was not rendered locally.
+TeX Live 2026 (XeLaTeX + Biber): 8 pages, no LaTeX error, reference list
+rendered.
 
 ## Expected headline numbers (from `data/*/summary.json`)
 
@@ -118,8 +121,8 @@ build machine, so the reference list was not rendered locally.
 | confirmatory | N = 1 000, T = 0.2 | 0.126 [0.125, 0.128] | 0.453 [0.450, 0.455] | 3.58 [3.53, 3.64] | 0.975 [0.967, 0.982] |
 | correlated m = 0 | N = 1 000, T = 0 | 0.160 [0.158, 0.162] | 0.611 [0.606, 0.616] | 3.82 [3.77, 3.88] | 1.000 (exact) |
 | correlated m = 0.15 | N = 1 000, T = 0 | 0.068 [0.066, 0.070] | 0.616 [0.612, 0.619] | 9.06 [8.84, 9.29] | 1.000 (exact) |
-| correlated m = 0.30 | N = 1 000, T = 0 | 0.014 [0.014, 0.015] (grid floor) | 0.636 [0.633, 0.639] | **inconclusive** (no ratio reported) | 1.000 (exact) |
-| correlated m = 0.30 | N = 1 000, T = 0.2 | 0.007 [0.003, 0.011], 5/10 seeds below grid | 0.463 [0.458, 0.468] | — | **not computable** |
+| correlated m = 0.30 | N = 1 000, T = 0 | 0.014 [0.014, 0.015] (grid floor) | 0.636 [0.633, 0.639] | **inconclusive** (ratio defined but not retained: Hebbian crossing inside 0.01–0.02) | 1.000 (exact) |
+| correlated m = 0.30 | N = 1 000, T = 0.2 | 0.007 [0.003, 0.011], 5/10 seeds below grid | 0.463 [0.458, 0.468] | — | **undefined on 5 seeds** |
 
 Note: `data/nh01_correlated/{summary.json,figure.png}` carry the automatic
 label `confirme` for m = 0.30 as produced by the tagged code; the article
