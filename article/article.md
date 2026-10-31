@@ -453,6 +453,10 @@ covered by the internal re-run.
 | S3 | the three pre-registrations, verbatim copies of the tagged files (tags `prereg-nh01-` `hopfield-dream-20261025`, `confirmatory-20261025`, `correlated-20261027`) | `prereg/` |
 | F | publication rendering of the figures | `code/scripts/` `publication_figures.py` |
 
+# AI usage
+
+Claude Code (Anthropic) was used as a tool for the code, the documentation and drafts of this text, in sessions driven by the author; every draft was read, corrected and arbitrated by the author. Codex CLI (OpenAI; gpt-6.1-sol, then gpt-6-astra) ran two automated checks of the finished package before submission; the briefs, reports and verdict tables are in `review/`. These checks are not peer review. The design, the three pre-registrations, every verdict and every number in this article were checked and decided by the author. Development history: hypneum-lab/nerve-wml pull requests #81, #86 and #87, issue #68.
+
 # References
 
 - [@fachechi2019dreaming] Fachechi A., Agliari E., Barra A. (2019).
