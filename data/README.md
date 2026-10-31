@@ -20,9 +20,12 @@ cells identical except `task_seconds`, figure byte-identical), `launch.txt`,
 `uv_pip_freeze.txt`, `code_sha256_at_tag.txt`, `outputs_sha256.txt`.
 
 Caveat: `nh01_correlated/summary.json` and `figure.png` carry the automatic
-label `confirme` for the m = 0.30 level; the article reports that level as
-inconclusive (Hebbian reference at the floor of the load grid, control not
-computable at T = 0.2). The files are kept as produced by the tagged code.
+label `confirme` for the m = 0.30 level; the article keeps that registered label (T = 0 ratio 44.38 [42.56, 46.97],
+Hebbian crossings inside the load interval 0.01–0.02) and adds a
+post-analysis assessment of inconclusive: at T = 0.2 five Hebbian and two
+shrink capacities are below the load grid and coded as zero, so the control
+statistic is not censoring-adjusted. The files are kept as produced by the
+tagged code.
 
 Data DOI: 10.5281/zenodo.23833431 (nerve-wml v1.10.0, released and archived
 2026-10-31, contains `results/nh01*` exactly as copied here; concept DOI

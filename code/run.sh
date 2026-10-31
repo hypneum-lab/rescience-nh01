@@ -3,7 +3,9 @@
 # the pilot) with the exact seeds and grids of the nerve-wml tags
 #   prereg-nh01-confirmatory-20261025  (commit a000f73)  -> confirmatory.py
 #   prereg-nh01-correlated-20261027    (commit df9a1e7)  -> correlated.py
-#   prereg-nh01-hopfield-dream-20261025 (commit bc2f838) -> run.py (pilot)
+#   prereg-nh01-hopfield-dream-20261025 (commit bc2f838) freezes the pilot
+#   PROTOCOL only (no runner in that tag); the pilot runner shipped here is
+#   the one of df9a1e7, and the pilot is not covered by the provenance re-runs
 #
 # Seeds, load grid, dreaming-time grid, temperatures, cue noise and probe
 # counts are constants inside the modules (not CLI options), so nothing here
@@ -17,7 +19,11 @@
 #
 # Usage:  ./run.sh [confirmatory|correlated|pilot|all] [workers]   (default: all, nproc)
 # Output: results/<run>/ next to this script (cells.jsonl, summary.json,
-#         figure.png, run_meta.json). Compare with ../data/<run>/ afterwards:
+#         figure.png, run_meta.json). Compare with ../data/<run>/ afterwards
+#         (the comparator reads cells.jsonl.gz, so gzip first; then read
+#         keys_equal, cells_differing_non_timing, fields_differing, max_abs_diff
+#         and summary_equal_excl_run_meta in cmp.json — no failure exit status):
+#         gzip -k results/nh01_confirmatory/cells.jsonl
 #         python -I scripts/compare_nh01.py ../data/nh01_confirmatory results/nh01_confirmatory cmp.json
 #
 # Expected wall time (reference host electron-server, 8 x Xeon X5680 of 2010,

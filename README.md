@@ -15,12 +15,15 @@ Status: **draft, not yet submitted** (ReScience C issue to be opened on
 Headline: dreaming at $t = 10$ multiplies the empirical capacity by
 3.86 [3.79, 3.93] at $N = 1\,000$ (confirmed), 9.06 [8.84, 9.29] on correlated
 patterns with ancestor overlap $m = 0.15$ (confirmed), and the $m = 0.30$
-level is reported as **inconclusive** (Hebbian reference at the lower limit
-of the load grid at $T = 0$, below it on five seeds at $T = 0.2$, control
-ratio undefined there). The matched uniform-shrink
+level carries its registered C1 label (ratio 44.38 [42.56, 46.97], Hebbian
+crossings inside the first load interval 0.01–0.02, grid-sensitive
+magnitude) next to a **post-analysis assessment of inconclusive** (at
+$T = 0.2$ five Hebbian and two shrink estimates are below the grid and
+coded as zero, so the control statistic is not censoring-adjusted). The matched uniform-shrink
 control is exactly inert at $T = 0$ and lowers capacity by 2.5 per cent at
-$T = 0.2$. Both $N = 1\,000$ runs were reproduced bit-exactly from a clean
-clone at the tagged commit (9 120/9 120 and 29 640/29 640 cells).
+$T = 0.2$. Both $N = 1\,000$ runs were reproduced on the original host from a clean
+clone at the tagged commit with identical non-timing cell values (9 120/9 120
+and 29 640/29 640 cells).
 
 ## Layout
 
@@ -37,7 +40,7 @@ rescience-nh01/
 │   ├── figures/               figure-{pilot,confirmatory,correlated}.png (= data/*/figure.png)
 │   ├── article.tex            template + longtable/booktabs/amssymb and the pandoc helpers (3 lines)
 │   └── header.tex, rescience.cls, article.py, yaml-to-latex.py, Makefile, COPYING, fonts/
-│                              copied unchanged from github.com/ReScience/template (0978d0e)
+│                              from github.com/ReScience/template (0978d0e); Makefile adds the article.md → content.tex rule
 ├── code/
 │   ├── experiments/nh01_hopfield_dream/   run.py, confirmatory.py, correlated.py (verbatim, tag prereg-nh01-correlated-20261027)
 │   ├── tests/                 3 files, 20 unit tests
@@ -78,7 +81,7 @@ Requirements: Python 3.12, `code/requirements.txt`. No GPU, no torch.
 ```bash
 cd code
 python3.12 -m venv venv && . venv/bin/activate && pip install -r requirements.txt
-PYTHONPATH=. python -m pytest tests/        # 20 tests, seconds
+PYTHONPATH=. python -m pytest tests/        # 20 test functions, 23 cases, seconds
 ./run.sh confirmatory 4                     # N = 1 000, seeds 0-9: 6 951 s on the reference host
 ./run.sh correlated 2                       # N = 1 000, seeds 100-109: 22 866 s on the reference host
 ./run.sh pilot 4                            # optional, N <= 256: 1 547 s
@@ -109,8 +112,7 @@ cd article && make          # xelatex + biber; needs Python 3 + PyYAML (yaml-to-
 `content.tex` is generated from `article.md` by `article/md2tex.sh` (pandoc
 3.12, `--biblatex`, `\autocite` → `\supercite`, drops the References section);
 rerun it after editing `article.md`. Build checked 2026-10-31 with
-TeX Live 2026 (XeLaTeX + Biber): 8 pages, no LaTeX error, reference list
-rendered.
+TeX Live 2026 (XeLaTeX + Biber): 10 pages, 8 references, no LaTeX error.
 
 ## Expected headline numbers (from `data/*/summary.json`)
 
@@ -121,8 +123,8 @@ rendered.
 | confirmatory | N = 1 000, T = 0.2 | 0.126 [0.125, 0.128] | 0.453 [0.450, 0.455] | 3.58 [3.53, 3.64] | 0.975 [0.967, 0.982] |
 | correlated m = 0 | N = 1 000, T = 0 | 0.160 [0.158, 0.162] | 0.611 [0.606, 0.616] | 3.82 [3.77, 3.88] | 1.000 (exact) |
 | correlated m = 0.15 | N = 1 000, T = 0 | 0.068 [0.066, 0.070] | 0.616 [0.612, 0.619] | 9.06 [8.84, 9.29] | 1.000 (exact) |
-| correlated m = 0.30 | N = 1 000, T = 0 | 0.014 [0.014, 0.015] (grid floor) | 0.636 [0.633, 0.639] | **inconclusive** (ratio defined but not retained: Hebbian crossing inside 0.01–0.02) | 1.000 (exact) |
-| correlated m = 0.30 | N = 1 000, T = 0.2 | 0.007 [0.003, 0.011], 5/10 seeds below grid | 0.463 [0.458, 0.468] | — | **undefined on 5 seeds** |
+| correlated m = 0.30 | N = 1 000, T = 0 | 0.014 [0.014, 0.015] (grid floor) | 0.636 [0.633, 0.639] | 44.38 [42.56, 46.97] registered C1 confirmed (grid-sensitive: Hebbian crossing inside 0.01–0.02); post-analysis level assessment inconclusive | 1.000 (exact) |
+| correlated m = 0.30 | N = 1 000, T = 0.2 | 0.007 [0.003, 0.011], 5/10 seeds below grid | 0.463 [0.458, 0.468] | — | undefined on 5 seeds; zero-coded 0.6 [0.2, 1.0] on the rest |
 
 Note: `data/nh01_correlated/{summary.json,figure.png}` carry the automatic
 label `confirme` for m = 0.30 as produced by the tagged code; the article
