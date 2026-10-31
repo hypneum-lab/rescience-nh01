@@ -26,10 +26,19 @@ article's statistical-mechanics analysis predicts that the critical storage
 load $\alpha_c(t)$ rises from the Amit–Gutfreund–Sompolinsky value
 $\approx 0.138$ at $t = 0$ towards the theoretical bound $\alpha = 1$, that
 spurious (mixture) attractors are removed, that pure patterns are reinforced,
-and that the gain is robust to thermal noise; Monte Carlo simulations in the
-original article agree with the theory (TODO: verify the exact figures and
-system sizes of the original Monte Carlo runs in the published PDF, Sections
-4–5, before submission).
+and that the gain is robust to thermal noise. The original Monte Carlo
+checks (Section 2.5 of the published article) use single-spin-flip Glauber
+dynamics on networks of $N = 5\,000$ neurons averaged over $M = 10$ pattern
+realisations for the magnetisation curves (their Fig. 7, loads $P/N \in
+\{0.02, 0.08, 0.32\}$, $t \in \{0, 0.1, 1, 10, 100, 1000\}$), a finite-size
+comparison at $N \in \{500, 1\,000, 5\,000\}$ (their Fig. 8), and
+$N = 1\,000$, $P = 50$ for the internal-field and basin analyses (their
+Figs. 9–10; 200 zero-noise evolutions for each of 200 pattern realisations
+for the basins). The replica-symmetric capacity rises from
+$\alpha_c(0) \simeq 0.138$ to $\alpha_c \simeq 1.07$ as $t \to \infty$,
+the excess over Gardner's bound being attributed to replica-symmetry
+breaking. No capacity curve is measured by Monte Carlo in the original: the
+simulations verify magnetisations, fields and basins against the theory.
 
 We replicate these qualitative claims with an independent NumPy
 implementation at finite size ($N \le 1\,000$), a different, noisy-cue
