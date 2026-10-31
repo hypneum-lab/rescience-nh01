@@ -1,0 +1,5 @@
+# Exact versions of the environment that produced data/ (nerve-wml run venv,
+# electron-server, Python 3.12.15; see data/*/provenance-rerun-20261030/uv_pip_freeze.txt).
+numpy==2.5.4
+matplotlib==3.11.2
+pytest==9.1.1

@@ -1,0 +1,113 @@
+# ReScience C metadata — NH-01 replication (Hypneum Lab)
+# Template: https://github.com/ReScience/template/blob/master/metadata.yaml
+# (fetched 2026-10-31). Field names and nesting follow the template verbatim.
+# Items marked "TODO" are PI decisions or post-acceptance fields.
+# -------------------------------------------------------
+
+# Title of the article:
+#  - For a successful replication, it should be prefixed with "[Re]"
+#  - For a failed replication, it should be prefixed with "[¬Re]"
+title: "[Re] Dreaming neural networks: forgetting spurious memories and reinforcing pure ones"
+
+# List of authors with name, orcid number, email and affiliation
+# Affiliation "*" means contact author (required even for single-authored papers)
+authors:
+  - name: Clément Saillant
+    orcid: 0000-0002-8414-185X
+    email: clement@saillant.cc
+    affiliations: 1,*      # * is for contact author
+
+# List of affiliations with code (corresponding to author affiliations), name
+# and address.
+affiliations:
+  - code:    1
+    name:    Hypneum Lab
+    address: Grandris, France   # TODO: verify the address the PI wants printed
+                                # (CITATION.cff gives "L'Electron Rare, Grandris, France")
+
+# List of keywords (adding the programming language might be a good idea)
+keywords: rescience c, python, numpy, hopfield network, dreaming, unlearning, associative memory, storage capacity, pre-registration
+
+# Code URL and DOI/SWH (url is mandatory for replication, doi after acceptance)
+# You can get a DOI for your code from Zenodo, or an SWH identifier from
+# Software Heritage.
+code:
+  - url: https://github.com/hypneum-lab/rescience-nh01   # dedicated submission repository (PI decision 2026-10-31)
+  - doi:                                                  # Zenodo DOI of THIS repository, after acceptance.
+  # Upstream nerve-wml on Zenodo: concept DOI 10.5281/zenodo.19656342; latest
+  # archived version v1.8.0 = 10.5281/zenodo.20108695 (2026-04-23), which
+  # predates NH-01 — cite the tags + SWHID below for the NH-01 code.
+  - swh:                                                  # SWHID of the submission repo, after creation
+  # Upstream provenance (nerve-wml, the repository where the pre-registered
+  # runs were executed; all three tagged commits resolve in the Software
+  # Heritage archive, snapshot swh:1:snp:01242c8b5873518a503b84a80ce3a302bb69b8a8,
+  # visit 2026-10-29T10:55:51Z):
+  #   pilot        tag prereg-nh01-hopfield-dream-20261025  swh:1:rev:bc2f838919756a8dc2249e577cc5fac0f21cf0d2
+  #   confirmatory tag prereg-nh01-confirmatory-20261025    swh:1:rev:a000f73addde8ff8ac0f28e72a038ad886848f48
+  #   correlated   tag prereg-nh01-correlated-20261027      swh:1:rev:df9a1e7634113599c9b38cb4259068a29a5bdd2a
+
+# Data URL and DOI (optional if no data)
+data:
+  - url: https://github.com/hypneum-lab/rescience-nh01/tree/main/data   # data/ of the submission repository (copied from nerve-wml results/nh01*/)
+  - doi:   # data DOI: to be minted (Zenodo deposit of results/nh01, pending PI decision).
+           # Until then cite nerve-wml (concept DOI 10.5281/zenodo.19656342) at the
+           # tags prereg-nh01-* and SWH snapshot swh:1:snp:01242c8b5873518a503b84a80ce3a302bb69b8a8.
+
+# Information about the original article that has been replicated
+replication:
+ - cite: "A. Fachechi, E. Agliari, A. Barra, Dreaming neural networks: forgetting spurious memories and reinforcing pure ones, Neural Networks 112 (2019) 24–40."
+ - bib:  fachechi2019dreaming
+ - url:  https://arxiv.org/abs/1810.12217
+ - doi:  10.1016/j.neunet.2019.01.006   # checked against the Crossref record 2026-10-31 (Neural Networks, vol. 112, pp. 24–40, April 2019)
+
+# Don't forget to surround abstract with double quotes
+abstract: "Fachechi, Agliari and Barra (2019) introduced a dreaming kernel for the Hopfield model, J(t) = J(1+t)(1+tJ)^-1, which interpolates between the Hebbian rule (t = 0) and the projection rule (t to infinity) and whose critical load rises from about 0.138 towards 1 while spurious attractors are removed. We replicate the qualitative claims numerically with an independent NumPy implementation at finite size (N up to 1 000), with a pre-registered design frozen by annotated git tags before each run, ten seeds per cell, a noisy-cue capacity estimator and seed-level bootstrap confidence intervals. Dreaming at t = 10 multiplies the empirical capacity by 3.86 [3.79, 3.93] at N = 1 000 and removes all spurious final states at loads 0.14 and 0.20, consistent with the original claims. We add a control absent from the original article, a uniform rescaling of the Hebbian couplings matched on the Frobenius norm, which is exactly inert at zero temperature (ratio 1 on every seed) and lowers capacity by 2.5 per cent at T = 0.2; the dreaming gain therefore cannot be a global synaptic downscaling. On correlated patterns (ancestor overlap m = 0.15) the gain rises to 9.06 [8.84, 9.29]; at m = 0.30 the Hebbian capacity falls below the load grid and the control ratio is not computable, so that level is reported as inconclusive. With the self-coupling removed and a noisy cue, the finite-size capacity peaks at a finite dreaming time t* = 7 rather than increasing monotonically, a finite-size effect the original mean-field analysis does not describe. Every committed artefact was reproduced bit-exactly from a clean clone at the tagged commit (9 120/9 120 and 29 640/29 640 cells)."
+
+# Bibliography file (yours)
+bibliography: bibliography.bib
+
+# Type of the article
+type: Replication
+
+# Scientific domain of the article (e.g. Computational Neuroscience)
+domain: Computational Neuroscience
+
+# Coding language (main one only if several)
+language: Python
+
+# To be filled by the author(s) after acceptance
+# -----------------------------------------------------------------------------
+
+# For example, the URL of the GitHub issue where review actually occured
+review:
+  - url:
+
+contributors:
+  - name:
+    orcid:
+    role: editor
+  - name:
+    orcid:
+    role: reviewer
+  - name:
+    orcid:
+    role: reviewer
+
+# This information will be provided by the editor
+dates:
+  - received:
+  - accepted:
+  - published:
+
+# This information will be provided by the editor
+article:
+  - number:
+  - doi:
+  - url:
+
+# This information will be provided by the editor
+journal:
+  - name:   "ReScience C"
+  - issn:   2430-3658
+  - volume:
+  - issue:

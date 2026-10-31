@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# LaTeX build products (article/)
+article/*.aux
+article/*.bbl
+article/*.bcf
+article/*.blg
+article/*.fdb_latexmk
+article/*.fls
+article/*.idx
+article/*.ist
+article/*.log
+article/*.out
+article/*.run.xml
+article/*.toc
+article/*.synctex.gz
+article/metadata.tex
+article/article.pdf
+
+# Run outputs (never commit a new run here; compare it with data/ instead)
+code/results/
+*.jsonl
+
+# OS
+.DS_Store
