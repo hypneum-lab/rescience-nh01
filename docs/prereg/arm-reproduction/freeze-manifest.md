@@ -10,4 +10,4 @@
 | `docs/prereg/arm-reproduction/requirements-gb300-nh01-arm.txt` | `d80cdcc94653f49321900cd5a0626340c7dcf53bdd96bfaafad089d7d4d98a1d` |
 | `docs/prereg/arm-reproduction/requirements-review.md` | `662e7c63c228dc3a8e8e36bb966316b2d51d7b0a2ead581756e9f76fbc59b3d4` |
 
-Tag: `arm-repro-gb300-freeze-20261031` (annotated, on the commit that adds this frozen manifest) · merge commit: `e03031cb81d1362cc345b6bc45d6b9e494b39a48` · SWHID (revision): pending Software Heritage.
+Tag: `arm-repro-gb300-freeze-20261031` (annotated, on the commit that adds this frozen manifest) · merge commit: `e03031cb81d1362cc345b6bc45d6b9e494b39a48` · SWHID (revision): `swh:1:rev:f020f6f049b17a39dcfc14246a10cfaed569fb4e` (snapshot `swh:1:snp:1d130bb292fc763e5489f9ea504a444c3bb72992`, save requested 2026-10-31T21:39:47Z, succeeded) · tag object `0f2490ae7d0f0cc8954f16340c4a08a30f1640ab`, tagger date 2026-10-31T22:39:44+01:00 · manifest SHA-256 at the tag `4c7ea25532c4b196ce8f86de8fda13dd67db12a11dfbaa17c528bf3b20278e54`.
