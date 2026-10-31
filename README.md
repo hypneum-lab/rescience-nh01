@@ -64,9 +64,9 @@ rescience-nh01/
 Software Heritage snapshot of https://github.com/hypneum-lab/nerve-wml:
 `swh:1:snp:01242c8b5873518a503b84a80ce3a302bb69b8a8` (visit 2026-10-29T10:55:51Z).
 Zenodo (nerve-wml): concept DOI [10.5281/zenodo.19656342](https://doi.org/10.5281/zenodo.19656342);
-latest archived version v1.8.0 = 10.5281/zenodo.20108695 (2026-04-23), which
-predates NH-01 — the NH-01 code is cited by tag + SWHID. **Data DOI: to be
-minted** (Zenodo deposit of `results/nh01*`, pending PI decision).
+version v1.10.0 = [10.5281/zenodo.23833431](https://doi.org/10.5281/zenodo.23833431)
+(2026-10-31) archives the NH-01 code and `results/nh01*`. **Data DOI:
+10.5281/zenodo.23833431.** The exact runs are pinned by tag + SWHID.
 Merged PRs: hypneum-lab/nerve-wml#81 (pilot), #86 (confirmatory + provenance
 re-run), #87 (correlated + provenance re-run). Issue #68.
 

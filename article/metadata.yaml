@@ -34,9 +34,9 @@ keywords: rescience c, python, numpy, hopfield network, dreaming, unlearning, as
 code:
   - url: https://github.com/hypneum-lab/rescience-nh01   # dedicated submission repository (PI decision 2026-10-31)
   - doi:                                                  # Zenodo DOI of THIS repository, after acceptance.
-  # Upstream nerve-wml on Zenodo: concept DOI 10.5281/zenodo.19656342; latest
-  # archived version v1.8.0 = 10.5281/zenodo.20108695 (2026-04-23), which
-  # predates NH-01 — cite the tags + SWHID below for the NH-01 code.
+  # Upstream nerve-wml on Zenodo: concept DOI 10.5281/zenodo.19656342; version
+  # v1.10.0 = 10.5281/zenodo.23833431 (2026-10-31) archives the NH-01 code
+  # and results; the tags + SWHID below pin the exact runs.
   - swh:                                                  # SWHID of the submission repo, after creation
   # Upstream provenance (nerve-wml, the repository where the pre-registered
   # runs were executed; all three tagged commits resolve in the Software
@@ -49,9 +49,9 @@ code:
 # Data URL and DOI (optional if no data)
 data:
   - url: https://github.com/hypneum-lab/rescience-nh01/tree/main/data   # data/ of the submission repository (copied from nerve-wml results/nh01*/)
-  - doi:   # data DOI: to be minted (Zenodo deposit of results/nh01, pending PI decision).
-           # Until then cite nerve-wml (concept DOI 10.5281/zenodo.19656342) at the
-           # tags prereg-nh01-* and SWH snapshot swh:1:snp:01242c8b5873518a503b84a80ce3a302bb69b8a8.
+  - doi: 10.5281/zenodo.23833431   # nerve-wml v1.10.0 (2026-10-31): results/nh01* archived with the code;
+           # concept DOI 10.5281/zenodo.19656342; tags prereg-nh01-* and SWH snapshot
+           # swh:1:snp:01242c8b5873518a503b84a80ce3a302bb69b8a8 pin the runs.
 
 # Information about the original article that has been replicated
 replication:

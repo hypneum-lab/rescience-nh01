@@ -24,9 +24,8 @@ label `confirme` for the m = 0.30 level; the article reports that level as
 inconclusive (Hebbian reference at the floor of the load grid, control not
 computable at T = 0.2). The files are kept as produced by the tagged code.
 
-Data DOI: to be minted (Zenodo deposit of `results/nh01*`, pending PI
-decision). Until then cite nerve-wml (Zenodo concept DOI
-10.5281/zenodo.19656342; latest archived version v1.8.0 =
-10.5281/zenodo.20108695, 2026-04-23, predates NH-01) at the tags above and
+Data DOI: 10.5281/zenodo.23833431 (nerve-wml v1.10.0, released and archived
+2026-10-31, contains `results/nh01*` exactly as copied here; concept DOI
+10.5281/zenodo.19656342). Cite it together with the tags above and
 the Software Heritage snapshot `swh:1:snp:01242c8b5873518a503b84a80ce3a302bb69b8a8`.
 Licence: CC BY 4.0 (`../LICENSE-CC-BY-4.0`).

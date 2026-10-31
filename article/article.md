@@ -312,12 +312,10 @@ computable. A scale sweep (nerve-wml#90) is open and not included here.
 - **Artefacts** (`SHA256SUMS` in each directory): `results/nh01/`,
   `results/nh01_confirmatory/`, `results/nh01_correlated/` — each with
   `cells.jsonl.gz`, `summary.json`, `figure.png`, `run_meta.json`,
-  `run.log`; copied into `data/` of the submission repository. Data DOI: to
-  be minted (Zenodo deposit of `results/nh01*`, pending PI decision). Until
-  then, cite the nerve-wml repository (Zenodo concept DOI
-  10.5281/zenodo.19656342; its latest archived version v1.8.0,
-  10.5281/zenodo.20108695 of 2026-04-23, predates NH-01) at the three
-  `prereg-nh01-*` tags and the SWH snapshot `swh:1:snp:01242c8b…` above.
+  `run.log`; copied into `data/` of the submission repository. Data DOI:
+  10.5281/zenodo.23833431 (nerve-wml v1.10.0, archived 2026-10-31, concept
+  DOI 10.5281/zenodo.19656342), to be cited with the three `prereg-nh01-*`
+  tags and the SWH snapshot `swh:1:snp:01242c8b…` above.
 - **For reviewers**: unit tests run in seconds; the pilot in ~26 min on
   8 cores; the two $N = 1\,000$ runs in 2–8 h depending on workers.
   Expected outputs are the committed `summary.json` files; `figure.png`
