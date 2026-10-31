@@ -9,7 +9,7 @@ $N = 1\,000$ studies.
 
 Author: Clément Saillant (Hypneum Lab, ORCID
 [0000-0002-8414-185X](https://orcid.org/0000-0002-8414-185X)).
-Status: **submission package frozen on 2026-10-31** (tag `submission-20261031`); the ReScience C submission issue will be linked here once opened.
+Status: **submission package frozen on 2026-10-31** (tag `submission-20261031`); submitted to ReScience C as [ReScience/submissions#147](https://github.com/ReScience/submissions/issues/147) on 2026-10-31.
 Version 2 (branch `v2-diagonal`, draft): adds the post-freeze, pre-registered
 self-coupling ablation (convention table, Figure 3, three references); every
 number of the frozen package is unchanged.
