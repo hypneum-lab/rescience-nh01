@@ -20,7 +20,6 @@ article/*.run.xml
 article/*.toc
 article/*.synctex.gz
 article/metadata.tex
-article/article.pdf
 
 # Run outputs (never commit a new run here; compare it with data/ instead)
 code/results/
