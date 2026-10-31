@@ -166,6 +166,8 @@ by the PI; results are reproduced by the test suite and CI, and review
 reports are evidence, not endorsements. No model is listed as a
 co-author of a publication or as a co-author of a commit.
 
+Details: docs/ai_use.md.
+
 ## Licence
 
 Code (`code/`): MIT, © 2026 L'Electron Rare (`LICENSE`). Article text,
