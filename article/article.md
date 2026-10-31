@@ -84,7 +84,7 @@ with a stored pattern.
 
 Our code (S1: `run.py`, `confirmatory.py`, `correlated.py`; 713 + 384 +
 237 lines, NumPy only, no original code reused) computes $J(t)$
-by spectral decomposition of the symmetric $J$ (`numpy.linalg.eigh`, negative
+by spectral decomposition of the symmetric $J$ (`numpy.linalg.` `eigh`, negative
 numerical eigenvalues clipped to 0). Twenty test functions (23 executed
 cases) check that $J(0) = J$, that the spectral form equals the pattern-space
 closed form on 2-pattern and many-pattern cases, that $t = 10^{8}$
@@ -115,7 +115,7 @@ $T = 0.2$), `other_stored` or `spurious`. Capacity estimator per
 (arm, seed): $\hat\alpha_c$ is the linearly interpolated 0.5 crossing
 of the retrieval fraction $r(\alpha)$ immediately after the *last* grid load
 with $r \ge 0.5$, on the grid
-$\alpha \in \{0.04, 0.06, \dots, 0.20, 0.25, \dots, 0.95\}$ (24 values;
+$\alpha \in \{0.04,\allowbreak 0.06,\allowbreak \dots,\allowbreak 0.20,\allowbreak 0.25,\allowbreak \dots,\allowbreak 0.95\}$ (24 values;
 0.01 and 0.02 added for the correlated run). If the largest load still has
 $r \ge 0.5$ the estimate is right-censored at 0.95; if no load reaches 0.5
 the code records the flag `below_grid` and a zero sentinel, which marks
@@ -124,7 +124,7 @@ $\alpha$ and the same patterns, cues and update orders are used for every
 arm of a cell (paired design). Statistics are paired per-seed ratios and
 differences, mean over 10 seeds with a 95 % percentile bootstrap CI (10 000
 seed-level resamples, bootstrap seed 20261025). Every random draw comes from
-`numpy.random.default_rng([20261025, seed, N, stream])`.
+`numpy.random.default_rng(` `[20261025, seed, N, stream])`.
 
 ## Matched uniform-shrink control (added)
 
@@ -159,7 +159,7 @@ before launch and each archived by Software Heritage (verbatim copies in
 - **Pilot** (tag of 2026-10-25, S3): $N \in \{64, 128,
   256\}$, $t \in \{0, 0.3, 1, 3, 10, 30, 100\}$, three conditions.
 - **Confirmatory** (second tag of 2026-10-25): $N = 1\,000$,
-  $t \in \{0, 1, 3, 5, 7, 10, 15, 20, 30, 100\}$, $T \in \{0, 0.2\}$.
+  $t \in \{0,\allowbreak 1,\allowbreak 3,\allowbreak 5,\allowbreak 7,\allowbreak 10,\allowbreak 15,\allowbreak 20,\allowbreak 30,\allowbreak 100\}$, $T \in \{0, 0.2\}$.
 - **Correlated** (tag of 2026-10-27): as confirmatory, three
   correlation levels, 26 loads.
 
@@ -295,7 +295,7 @@ labels are kept unchanged in the raw outputs. The pre-registered below-grid rule
 a future amendment should extend it to C3′ and the load grid below 0.01.
 
 C4 trend: the registered estimate is $R(0.30) - R(0)$ = 40.6 [38.7,
-43.2], label `gain_increases`. Its magnitude depends on the interpolation of
+43.2]. The label is `gain_increases`. Its magnitude depends on the interpolation of
 the small Hebbian denominator at $m = 0.30$ and the interval does not
 account for load-grid resolution; we retain the increasing direction as a
 descriptive result only. P4 holds at every level (0 spurious
@@ -310,7 +310,7 @@ pattern run on new seeds (3.82 vs 3.86; $t^* = 7$ in both; shrink 0.979 vs
 
 Both $N = 1\,000$ runs were re-executed on 2026-10-30 from a fresh clone
 checked out at the tag, with the SHA-256 of the executed files checked
-against `git show <tag>:<file>` before launch and the tag record fetched from
+against `git show` `<tag>:` `<file>` before launch and the tag record fetched from
 the GitHub API before launch (D2 and D3, directory
 `provenance-rerun-20261030/`). Result: **9 120 /
 9 120** and **29 640 / 29 640** cells identical to the committed
@@ -381,18 +381,19 @@ and below the grid on five seeds at $T = 0.2$. A scale sweep (nerve-wml#90) is o
 
 # Reproducibility
 
-The submission repository https://github.com/hypneum-lab/rescience-nh01
+The submission repository <https://github.com/hypneum-lab/rescience-nh01>
 (MIT for the code, CC BY 4.0 for the text and figures) holds the runners
 (S1), the tests (S2), the three pre-registrations (S3), the three data sets
 (D1–D3) and the provenance files of the internal re-runs. The runners are
-the files of `experiments/nh01_hopfield_dream/` of hypneum-lab/nerve-wml at
+the files of `experiments/` `nh01_hopfield_dream/` of hypneum-lab/nerve-wml at
 the tag `prereg-nh01-correlated-20261027` (commit `df9a1e7`), whose SHA-256
 are recorded in `code/CODE_SHA256_AT_TAG.txt`; the pilot tag freezes the
 pilot protocol only, the code it ran is the first runner commit after it.
-Software Heritage snapshot `swh:1:snp:01242c8b5873518a503b84a80ce3a302bb69b8a8`
+Software Heritage snapshot
+\texttt{swh:1:snp:\allowbreak{}0124\allowbreak{}2c8b\allowbreak{}5873\allowbreak{}518a\allowbreak{}503b\allowbreak{}84a8\allowbreak{}0ce3\allowbreak{}a302\allowbreak{}bb69\allowbreak{}b8a8}
 (visit 2026-10-29) holds the three tags as releases; the data are archived
-at Zenodo under DOI 10.5281/zenodo.23833431 (nerve-wml v1.10.0, concept DOI
-10.5281/zenodo.19656342).
+at Zenodo under DOI 10.5281/\allowbreak{}zenodo.23833431 (nerve-wml v1.10.0, concept DOI
+10.5281/\allowbreak{}zenodo.19656342).
 
 Environment: Python 3.12.15, numpy 2.5.4, matplotlib 3.11.2 (full freeze in
 the re-run provenance directory of D2 and D3), single-threaded BLAS
@@ -428,7 +429,8 @@ max_abs_diff   summary_equal_excl_run_meta
 
 Exact reproduction means matching keys and zero non-timing differences; on
 another platform, the reported differences are read against the tolerance
-below. The exit status alone validates nothing. `--analyze-only` recomputes `summary.json` and `figure.png` from an
+below. The exit status alone validates nothing. The option `--analyze-only` recomputes `summary.json` and
+`figure.png` from an
 existing `cells.jsonl`. Unit tests run in seconds; the pilot takes about
 26 min on 8 cores; the two $N = 1\,000$ runs 2–8 h depending on the number
 of workers (the re-runs with 2 workers took 15 136 s and 30 547 s).
@@ -450,7 +452,7 @@ covered by the internal re-run.
 | D3 | correlated, $N = 1\,000$, 29 640 cells, re-run provenance | `data/nh01_correlated/` (same files; `provenance-rerun-` `20261030/`) |
 | S1 | runners `run.py`, `confirmatory.py`, `correlated.py` at the correlated tag | `code/experiments/` `nh01_hopfield_dream/`; hashes in `code/` `CODE_SHA256_AT_TAG.txt` |
 | S2 | unit tests (20 functions, 23 cases) | `code/tests/` `test_nh01_hopfield_dream.py` |
-| S3 | the three pre-registrations, verbatim copies of the tagged files (tags `prereg-nh01-` `hopfield-dream-20261025`, `confirmatory-20261025`, `correlated-20261027`) | `prereg/` |
+| S3 | the three pre-registrations, verbatim copies of the tagged files (tag names in `prereg/README`) | `prereg/` |
 | F | publication rendering of the figures | `code/scripts/` `publication_figures.py` |
 
 # AI usage
