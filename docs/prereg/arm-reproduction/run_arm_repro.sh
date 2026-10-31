@@ -43,7 +43,7 @@ P="$WORK/$FIRST/docs/prereg/arm-reproduction"
 
 "$PYBIN" -m venv "$WORK/venv"
 PY="$WORK/venv/bin/python"
-"$PY" -m pip install -q --no-input --require-hashes -r "$P/requirements-aarch64.lock"
+"$PY" -m pip install -q --no-input --require-hashes --no-deps -r "$P/requirements-gb300-nh01-arm.txt"
 "$PY" -VV > "$R/python.txt"
 "$PY" -c "import platform,sys; assert platform.python_version()=='$EXPECTED_PY', platform.python_version(); assert platform.machine()=='aarch64'"
 "$PY" -m pip freeze > "$R/pip-freeze.txt"
@@ -69,18 +69,20 @@ workers_for() {  # run -> README count, or one task per worker if the probe proj
   per=$("$PY" -I -c "import json,sys; d=json.load(open(sys.argv[1]));
 print(int(d['projected_task_seconds']*10) if sys.argv[2]=='confirmatory'
       else int(d['projected_total_hours_2_workers']*2*3600))" "$out" "$run")
-  local w=${README_W[$run]} n
-  if [ $(( per / w )) -gt $(( ${WALL_CAP[$run]} / 2 )) ]; then w=${TASKS[$run]}; fi
+  local w=${README_W[$run]} n   # README worker counts only (PI decision D7)
   n=$(taskset -c "${CORES[$run]}" nproc)
   [ "$n" -ge "$w" ] || { echo "$run: core list has $n cores < $w workers" >> "$R/driver.log"; return 2; }
   # wall ~ ceil(tasks / w) rounds of the mean task, x 1.6 for the longest task
-  echo "$w $(( ( (${TASKS[$run]} + w - 1) / w ) * per / ${TASKS[$run]} * 16 / 10 ))"
+  local wall=$(( ( (${TASKS[$run]} + w - 1) / w ) * per / ${TASKS[$run]} * 16 / 10 ))
+  [ "$wall" -le $(( ${WALL_CAP[$run]} * 9 / 10 )) ] \
+    || { echo "$run: projected ${wall}s > 90% of the runner cap: NOT_STARTED" >> "$R/driver.log"; return 3; }
+  echo "$w $wall"
 }
 
 declare -A PIDS W
 need=0
 for run in $RUNS; do
-  out=$(workers_for "$run") || { log "probe or worker rule failed for $run"; exit 2; }
+  out=$(workers_for "$run") || { rc=$?; log "probe or worker rule refused $run (rc=$rc)"; exit "$rc"; }
   read -r w t <<< "$out"; W[$run]=$w
   log "probe $run: workers $w, projected wall ${t}s (see probe-$run.json)"
   [ "$t" -gt "$need" ] && need=$t
