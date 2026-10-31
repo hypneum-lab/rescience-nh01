@@ -13,11 +13,12 @@ architecture. It adds no hypothesis and no new claim about the dreaming kernel.
 
 | id | decision | proposal in this draft |
 |---|---|---|
-| TBD-1 | Upper bound of the « inconclusive » band for floating-point differences (not in the README) | 1e-9 absolute (section 6) |
-| TBD-2 | Reading of « to about 1e-12 » (the README gives no norm) | absolute difference ≤ 1e-12 on every floating-point diagnostic and every floating-point entry of `summary.json` |
-| TBD-3 | Split of the cell fields into « discrete outcomes » and « floating-point diagnostics » (the README names neither list) | section 5 |
-| TBD-4 | Python interpreter (Ubuntu 24.04 ships 3.12.3; the runs used 3.12.15) | CPython 3.12.15, python-build-standalone aarch64 build, hashed |
-| TBD-5 | Freeze form | merge on `main` plus an annotated tag `arm-repro-freeze-20261101` and its Software Heritage revision, before the first run |
+| TBD-1 | Upper bound of the « inconclusive » band for floating-point differences (not in the README) | 1e-9 absolute, bounds inclusive: ≤ 1e-12 strict, (1e-12, 1e-9] band (section 6) |
+| TBD-2 | Reading of « to about 1e-12 » (the README gives no norm) | absolute difference ≤ 1e-12 per scalar, on every bounded field of section 5 |
+| TBD-3 | Field schema: which fields are exact and which are bounded (the README names neither list) | section 5, including `cue_overlap` bounded and the grid-valued `summary.json` leaves exact |
+| TBD-4 | Python interpreter (Ubuntu 24.04 ships 3.12.3; the runs used 3.12.15) | CPython 3.12.15, python-build-standalone aarch64 archive, URL and SHA-256 recorded before access; the wrapper asserts the version |
+| TBD-5 | Freeze form | merge on `main` plus an annotated tag `arm-repro-freeze-20261101` and its Software Heritage revision, before anything runs on the host (smoke tests and probes included) |
+| TBD-6 | A run whose cells and `summary.json` are complete but whose figure rendering fails | the numeric comparison proceeds and the run is annotated « figure failed » (the figure is not part of the criterion) |
 
 ## 1. Status relative to the submission (fixed)
 
@@ -74,20 +75,29 @@ the confirmatory provenance re-run
 
 `ruff` and `tzdata` of the freeze file are not needed to run or compare.
 
-**BLAS.** The BLAS bundled in the `numpy` 2.5.4 aarch64 wheel (as on the reference host,
-where numpy came from the PyPI wheel). Its name, version and build options are recorded
-from `python -c "import numpy; numpy.show_config()"` before the runs. No other BLAS is
-installed into the venv or preloaded.
+**BLAS.** The OpenBLAS bundled in the hashed `numpy` 2.5.4 aarch64 wheel: once the wheel is
+hashed, its BLAS is fixed. Its name, version and build options are recorded from
+`numpy.show_config()` before the runs. No other BLAS is installed into the venv, and
+`LD_PRELOAD` is unset (recorded in the environment dump). The provenance of numpy on the
+reference host is the PyPI wheel of `uv pip install` (the freeze file lists versions, not
+wheel files); this is stated, not verified from the archived pieces.
 
-**Threads.** One BLAS thread per process, as on the reference host: `run.sh` exports
-`OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1`; the
-environment of each run is recorded.
+**Threads.** One BLAS thread per process, as on the reference host:
+`OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1`,
+exported by the wrapper before every step (smoke tests and probes included) and again by
+`run.sh`; the environment is recorded.
+
+**64 KiB pages.** A wheel tag does not prove that every ELF loads on a 64 KiB-page
+kernel. Before the runs, the wrapper imports numpy and matplotlib, runs a 200 × 200
+`eigh` round trip and renders a headless figure, then runs the 20 test functions; a
+failure there is an environment failure (no result), not a non-reproduction.
 
 **Code.** A clean clone of `hypneum-lab/rescience-nh01` at the freeze commit of this
 protocol; `code/` is byte-identical to the tag `submission-20261031` (checked with
 `shasum -a 256 -c` on `code/CODE_SHA256_AT_TAG.txt` and with
-`git diff --quiet submission-20261031 HEAD -- code/ data/ article/`; the lock file lives
-under `docs/`, so `code/` is unchanged).
+`git diff --quiet submission-20261031 HEAD -- code/ data/ article/`, and on `data/` with
+`shasum -a 256 -c MANIFEST.sha256`; the lock file lives under `docs/`, so `code/` is
+unchanged).
 
 ## 4. Seeds and design (fixed by the code, nothing chosen here)
 
@@ -99,70 +109,87 @@ stream `numpy.random.default_rng([20261025, seed, N, <stream id>])`; bootstrap s
 not the one of its tag and it is not covered by the provenance re-runs (`code/run.sh`
 header). The probe seeds 999/998 of `--probe` are discarded by the code.
 
-## 5. Comparison fields (TBD-3)
+## 5. Comparison schema (TBD-3)
 
-From `code/scripts/compare_nh01.py` and the cell records of `data/`:
+From `code/scripts/compare_nh01.py`, the runner code and the cell records of `data/`;
+`check_arm_repro.py` implements it with type checks (a boolean is never a number):
 
-- **cell key** (exact): `N`, `seed`, `alpha`, `P`, `arm`, `t`, `temp`, `flips`,
-  `ancestor_m` — the key of `compare_nh01.py`;
-- **discrete outcomes and design constants** (exact): `n_probes`, `cue_overlap`,
-  `retrieved_frac`, `other_stored_frac`, `spurious_frac`, `nonconverged_frac`, `sweeps`
-  (counts over probes divided by `n_probes`, an integer number of sweeps, constants);
-- **floating-point diagnostics** (bounded): `c_fro`, `c_spec`, `mean_overlap`,
-  `energy_own`, `energy_hebb`; NaN must be NaN on both sides;
-- `task_seconds` is ignored; any other field would be compared exactly and listed;
-- `summary.json` without `run_meta`: strings, booleans, integers, nulls and structure
-  exact (verdict labels included); floating-point entries bounded as above.
+- **cell key** (exact value and type): `N` int, `seed` int, `alpha` float, `P` int,
+  `arm` str, `t` float, `temp` float, `flips` float, and `ancestor_m` float for the
+  correlated run only (absent from the confirmatory cells);
+- **discrete outcomes** (exact value and type): `n_probes` int, `sweeps` int,
+  `retrieved_frac`, `other_stored_frac`, `spurious_frac`, `nonconverged_frac` (float
+  means of per-probe indicators, i.e. counts over `n_probes`);
+- **bounded floating-point fields**: `c_fro`, `c_spec`, `mean_overlap`, `energy_own`,
+  `energy_hebb`, and `cue_overlap` (a design constant, 0.8, computed by a float
+  reduction: the committed cells already hold 0.8 and 0.8000000000000002, so exactness
+  on it would reject for a trivial reason); finite, except `c_spec`, which is NaN by
+  design on dream and shrink rows; NaN must be NaN on both sides; infinities are invalid;
+- `task_seconds` is ignored; an unknown field makes the run NOT REPRODUCED;
+- `summary.json` without its root `run_meta`: structure, strings, booleans, integers and
+  nulls exact; the grid- or design-valued leaves `temp`, `flips`, `t_primary`, `t_star`,
+  `per_seed_t_star`, `tolerance`, `temperature` exact; every other float bounded (NaN
+  pattern equal).
 
-## 6. Decision rule (applied per run, confirmatory and correlated)
+Agreement of these artefacts does not prove that every final spin state agrees: states
+are not archived. The scope is the archived artefacts.
+
+## 6. Outcome rule (per run, confirmatory and correlated)
 
 `docs/prereg/arm-reproduction/check_arm_repro.py` (standard library only, SHA-256 recorded
-at the freeze) implements it; `compare_nh01.py` is run too and its output kept, but it
-has no tolerance and drops a NaN-vs-number difference from `max_abs_diff`.
+at the freeze) implements it; it first checks the committed reference against
+`data/MANIFEST.sha256`. `compare_nh01.py` is run too and kept, as a descriptive record.
 
-| outcome | condition |
+| outcome (exit) | condition |
 |---|---|
-| **REPRODUCED** | same number of cells, same keys, no duplicate key, every discrete field identical, same NaN pattern, every summary label and non-float entry identical, and every floating-point difference ≤ **1e-12** (TBD-2) |
-| **INCONCLUSIVE (bit level)** | everything exact as above, and the largest floating-point difference is in (1e-12, **1e-9**] (TBD-1): bit-exactness to the README tolerance is not shown, but the claims stand, because every discrete outcome and every verdict label is identical |
-| **NOT REPRODUCED** | any key, count, discrete-outcome, NaN-pattern or label difference, or any floating-point difference > 1e-9 |
-| no result | a crash, an incomplete run or an end of access before the run ends; the run may be restarted once from scratch in a new results directory; a second failure is reported as no result |
+| **REPRODUCED** (0) | same cell keys (no missing, extra or duplicate key), every exact field of section 5 identical, same NaN pattern, and every bounded difference ≤ **1e-12** (TBD-2). This is the README criterion; it is not a claim of bit identity |
+| **INCONCLUSIVE (strict tolerance)** (1) | every exact field identical, and the largest bounded difference in (1e-12, **1e-9**] (TBD-1): the 1e-12 criterion is not met, the discrete outcomes and the labels are reproduced |
+| **NOT REPRODUCED** (2) | any key, discrete-outcome, type, NaN-pattern, label or grid-value difference, an unknown field, an infinity, or a bounded difference > 1e-9 |
+| **NO RESULT** (3) | the run did not finish: runner exit code not 0, the runner's wall-time cap reached (8 h confirmatory, 12 h correlated, `confirmatory.py:48`, `correlated.py:45`), files missing or unreadable, or the re-run cells a strict subset of the reference cells |
 
-The study-level statement is REPRODUCED only if both runs are REPRODUCED; otherwise it is
-the worse of the two outcomes. `figure.png` byte identity is recorded and is not part of
-the rule (README). Whatever the outcome, a secondary, descriptive table lists the
-verdict labels and headline intervals of both `summary.json` files next to each other;
-it is labelled post-hoc and changes no outcome.
+A run with NO RESULT may be restarted once, in a new attempt directory (fresh clones);
+both attempts are reported. **Study outcome:** each run is reported separately; the
+study line is NOT REPRODUCED if either run is, else NO RESULT if either is, else
+INCONCLUSIVE if either is, else REPRODUCED.
+
+**What an outcome means.** REPRODUCED or INCONCLUSIVE reproduces the archived artefacts
+and their registered labels on aarch64; it is not a new statistical confirmation, and
+the reservations of the article stay (the m = 0.30 level keeps its post-analysis
+assessment « inconclusive », `data/README.md`). NOT REPRODUCED means the cross-platform
+criterion is not met; it does not by itself refute a claim (a discrete difference can
+come from a legitimate numerical bifurcation near a tie, `run.py` dynamics). Whatever
+the outcome, a descriptive table, fixed now, puts the verdict labels and headline
+intervals of both `summary.json` files side by side; it is labelled post-hoc and changes
+no outcome. `figure.png` byte identity is recorded, not part of the rule (TBD-6).
 
 ## 7. Commands
 
-On the GB300, from a clean clone at the freeze commit, inside `code/`:
+All steps run through `docs/prereg/arm-reproduction/run_arm_repro.sh` (committed with
+this protocol, SHA-256 recorded at the freeze), on the GB300, from a new attempt
+directory:
 
 ```bash
-python3.12 -m venv venv && . venv/bin/activate
-pip install --require-hashes -r ../docs/prereg/arm-reproduction/requirements-aarch64.lock   # reviewed
-python -VV; python -c "import numpy; print(numpy.__version__); numpy.show_config()"
-uname -a; getconf PAGESIZE; lscpu; nproc                            # host record
-PYTHONPATH=. python -m pytest tests/                                # smoke: 20 functions, 23 cases
-OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONPATH=. \
-  python -m experiments.nh01_hopfield_dream.confirmatory --probe    # timing probe, seed 999, discarded
-./run.sh confirmatory 4
-./run.sh correlated 2
-gzip -k results/nh01_confirmatory/cells.jsonl results/nh01_correlated/cells.jsonl
-for r in nh01_confirmatory nh01_correlated; do
-  python -I scripts/compare_nh01.py ../data/$r results/$r cmp-$r.json
-  python -I ../docs/prereg/arm-reproduction/check_arm_repro.py ../data/$r results/$r verdict-$r.json
-done
+WORK=<new attempt dir> COMMIT=<freeze commit> PYBIN=<reviewed CPython 3.12.15> \
+CORES_C=<cpu list> CORES_R=<cpu list> END_EPOCH=<end of access, Unix s> \
+  bash run_arm_repro.sh        # RUNS="correlated" for a restart of one run
 ```
 
-The two `run.sh` calls may run concurrently (6 worker processes in all), each under
-`taskset` on cores disjoint from any other job. The worker counts are those of the
-README so that wall times compare with the reference host; the worker count only
-changes scheduling (README). A failed smoke test (pytest) stops the session before any
-run.
+It (1) refuses an existing `WORK`; (2) clones the repository once per run at `COMMIT` and
+checks `code/`, `data/` and `article/` against the tag and the manifests; (3) builds one
+venv from `PYBIN`, installs `requirements-aarch64.lock` with `--require-hashes`, asserts
+Python 3.12.15 on aarch64 and records `pip freeze`, `numpy.show_config()`, the host and
+the environment; (4) runs the native smoke test and `pytest tests/` (20 functions, 23
+cases); (5) runs both timing probes (`--probe`, seeds 999 / 998, output discarded by the
+code); (6) chooses the worker counts (section 8) and applies the time rule; (7) starts
+`./run.sh confirmatory <w>` and `./run.sh correlated <w>` **concurrently**, each in its
+own clone under `taskset` on its own core list; (8) gzips each fresh `cells.jsonl`
+(refusing a pre-existing `.gz`), runs `compare_nh01.py` and `check_arm_repro.py` with the
+manifest, captures exit codes 0–3 as outcomes, writes the study line and `SHA256SUMS`.
+Any technical failure before (7) stops the attempt with no result.
 
 **Expected output:** the committed `data/nh01_confirmatory/summary.json` and
 `data/nh01_correlated/summary.json` (headline numbers in the README table « Expected
-headline numbers »), 9 120 and 29 640 cells, and the outcome REPRODUCED for both runs.
+headline numbers »), 9 120 and 29 640 cells, and REPRODUCED for both runs.
 
 ## 8. Expected duration on Grace (estimate, not measured)
 
@@ -179,13 +206,21 @@ host; the probe projects from a reduced load grid, so s is approximate).
 |---|---|---|---|---|
 | confirmatory | 4 | 1.9 h | 58 min | 39 min |
 | correlated | 2 | 6.4 h | 3.2 h | 2.1 h |
-| both, concurrent | 4 + 2 | 6.4 h | 3.2 h | 2.1 h |
+| both, concurrent (the protocol) | 4 + 2 | 6.4 h | 3.2 h | 2.1 h |
 | both, 10 + 30 workers (not the protocol) | 40 | 47 min | 23 min | 16 min |
 
 The earlier planning figure « 30 to 60 min with 10 workers » holds for the confirmatory
 run alone at s ≥ 1 (≤ 2 791 s / s), not for both runs at s = 1 with 10 workers (about
-2.0 h). The runs start only if, at the probe rate, both end at least 2 h before the end
-of access.
+2.0 h).
+
+**Worker rule (fixed now).** The README counts (4 and 2) are used, so that wall times
+compare with the reference host. If a probe projects that a run would take more than
+half of its runner's wall-time cap with the README count (4 h confirmatory, 6 h
+correlated), that run uses one worker per task instead (10 and 30); the worker count
+only changes scheduling (README), and the choice is logged. **Time rule:** the runs start
+only if 1.5 × the longest projected wall ends at least 2 h before the end of access.
+The probes measure s on this session's shared host; s is not a general property of
+Grace.
 
 ## 9. Freeze, artefacts and reporting
 
@@ -194,10 +229,15 @@ of access.
   and its Software Heritage revision, all before the first run; the hashed lock is added
   by a later commit of this branch, before the freeze. Nothing under `code/`, `data/`,
   `article/` or `README.md` changes.
-- **Artefacts:** `results/`, `cmp-*.json`, `verdict-*.json`, the host record, pip
-  freeze, `numpy.show_config()` output and logs, with `SHA256SUMS`, archived as one tar
-  and copied to electron-server `~/archives/hypneum/rescience-nh01-arm/`, verified there
-  with `sha256sum -c` before anything is deleted on the GB300.
+- **Before the freeze, still to add on this branch:** `requirements-aarch64.lock` (all
+  packages and transitive dependencies, exact versions, wheel hashes) and the CPython
+  archive URL and SHA-256 (TBD-4), both human-reviewed.
+- **Artefacts:** each attempt's `record/` (driver log with UTC times and exit codes,
+  host and environment dump, manifests check, pip freeze, `numpy.show_config()`, native
+  smoke, pytest, probes, run logs, `cmp-*.json`, `verdict-*.json`, `SHA256SUMS`) and the
+  `results/` of each clone, archived as one tar with its SHA-256 and copied to
+  electron-server `~/archives/hypneum/rescience-nh01-arm/`, verified there with
+  `sha256sum -c` before anything is deleted on the GB300.
 - **Reporting:** a results note in this directory (outcome, s, wall times, host
   record), labelled post-tag; optionally a comment on ReScience issue #147 with the
   measured wall time. Neither the article nor the arXiv preprint is changed.
