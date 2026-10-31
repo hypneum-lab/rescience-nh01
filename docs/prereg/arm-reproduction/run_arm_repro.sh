@@ -119,5 +119,5 @@ for run in $RUNS; do case ${V[$run]} in
   1) [ "$study" = REPRODUCED ] && study=INCONCLUSIVE_STRICT ;;
 esac; done
 log "study outcome for runs [$RUNS]: $study"
-(cd "$WORK" && find record */code/results -type f | LC_ALL=C sort | xargs sha256sum > record/SHA256SUMS)
+(cd "$WORK" && find record */code/results -type f ! -name 'SHA256SUMS*' | LC_ALL=C sort | xargs sha256sum > record/SHA256SUMS.tmp && mv record/SHA256SUMS.tmp record/SHA256SUMS)
 log "attempt done"
