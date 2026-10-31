@@ -2,6 +2,14 @@
 
 For the PI's HITL review before access. Generated 2026-10-31 on electron-server (uv 0.13.5, metadata and wheels only, nothing installed or built), Python 3.12, `aarch64-manylinux_2_35`, `--exclude-newer 2026-10-17` (no file newer than two weeks).
 
+**PI review: APPROVED, 2026-10-31 22:37 CET (QCM)**, under the condition that the numpy
+version (and BLAS) of the reference host be checked. Checked: the reference runs used
+numpy **2.5.4** (`data/*/run_meta.json`, `provenance-rerun-20261030/uv_pip_freeze.txt`),
+the same version as pinned here (aarch64 cp312 wheel, published 2026-10-10, more than two
+weeks old), so the pin is unchanged. The reference BLAS (name and version) was not
+recorded in the repository (only single-thread settings, `launch.txt`); this is declared
+in the protocol, section 3.
+
 **Every package has an aarch64 or pure-Python wheel; none is built from source.** One declared change: `python-dateutil` 3.0.0 of the reference run (published 2026-10-21) is newer than the cutoff, so 2.9.0.post0 is used (matplotlib dependency only; no `tzdata`).
 
 ### `requirements-gb300-nh01-arm.txt`

@@ -85,7 +85,11 @@ hashed, its BLAS is fixed. Its name, version and build options are recorded from
 `numpy.show_config()` before the runs. No other BLAS is installed into the venv, and
 `LD_PRELOAD` is unset (recorded in the environment dump). The provenance of numpy on the
 reference host is the PyPI wheel of `uv pip install` (the freeze file lists versions, not
-wheel files); this is stated, not verified from the archived pieces.
+wheel files); this is stated, not verified from the archived pieces. Checked on 2026-10-31 (PI
+condition): numpy 2.5.4 on the reference host, as pinned here; the reference BLAS name and
+version are **not recorded** in `data/` (only the single-thread settings, `launch.txt`),
+so the BLAS difference between the two hosts is declared, not measured; the aarch64
+OpenBLAS is recorded on the host.
 
 **Threads.** One BLAS thread per process, as on the reference host:
 `OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1`,
