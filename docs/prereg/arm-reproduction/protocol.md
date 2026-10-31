@@ -18,7 +18,8 @@ architecture. It adds no hypothesis and no new claim about the dreaming kernel.
 | TBD-3 | Field schema: which fields are exact and which are bounded (the README names neither list) | section 5, including `cue_overlap` bounded and the grid-valued `summary.json` leaves exact |
 | TBD-4 | Python interpreter (Ubuntu 24.04 ships 3.12.3; the runs used 3.12.15) | CPython 3.12.15, python-build-standalone aarch64 archive, URL and SHA-256 recorded before access; the wrapper asserts the version |
 | TBD-5 | Freeze form | merge on `main` plus an annotated tag `arm-repro-freeze-20261101` and its Software Heritage revision, before anything runs on the host (smoke tests and probes included) |
-| TBD-6 | A run whose cells and `summary.json` are complete but whose figure rendering fails | the numeric comparison proceeds and the run is annotated « figure failed » (the figure is not part of the criterion) |
+| TBD-6 | A run whose cells and `summary.json` are complete but whose figure rendering fails (`run.sh` exits non-zero) | NO RESULT, restart once (simple and automatic; the figure is otherwise not part of the criterion) |
+| TBD-7 | Core lists for the two concurrent runs (each must hold at least the chosen worker count: 4 / 2, or 10 / 30 under the worker rule) | 30 cores for correlated, 10 for confirmatory, disjoint from the gate's cores |
 
 ## 1. Status relative to the submission (fixed)
 
@@ -144,13 +145,15 @@ at the freeze) implements it; it first checks the committed reference against
 |---|---|
 | **REPRODUCED** (0) | same cell keys (no missing, extra or duplicate key), every exact field of section 5 identical, same NaN pattern, and every bounded difference ≤ **1e-12** (TBD-2). This is the README criterion; it is not a claim of bit identity |
 | **INCONCLUSIVE (strict tolerance)** (1) | every exact field identical, and the largest bounded difference in (1e-12, **1e-9**] (TBD-1): the 1e-12 criterion is not met, the discrete outcomes and the labels are reproduced |
-| **NOT REPRODUCED** (2) | any key, discrete-outcome, type, NaN-pattern, label or grid-value difference, an unknown field, an infinity, or a bounded difference > 1e-9 |
-| **NO RESULT** (3) | the run did not finish: runner exit code not 0, the runner's wall-time cap reached (8 h confirmatory, 12 h correlated, `confirmatory.py:48`, `correlated.py:45`), files missing or unreadable, or the re-run cells a strict subset of the reference cells |
+| **NOT REPRODUCED** (2) | any key (missing, extra or duplicate), discrete-outcome, type, NaN-pattern, label or grid-value difference, an unknown field, an infinity, or a bounded difference > 1e-9; a complete runner exit with fewer cells is NOT REPRODUCED, not NO RESULT |
+| **NO RESULT** (3) | the run did not finish: runner exit code not 0 (figure failure included, TBD-6), the runner's wall-time cap reached (8 h confirmatory, 12 h correlated, `confirmatory.py:48`, `correlated.py:45`), files missing, truncated or unreadable, gzip failure, invalid reference (4) or a checker error (5) |
 
-A run with NO RESULT may be restarted once, in a new attempt directory (fresh clones);
-both attempts are reported. **Study outcome:** each run is reported separately; the
-study line is NOT REPRODUCED if either run is, else NO RESULT if either is, else
-INCONCLUSIVE if either is, else REPRODUCED.
+A run with NO RESULT may be restarted once, in a new attempt directory (fresh clones,
+`RUNS=<that run>`); both attempts are reported, and **the outcome of a run is that of its
+last permitted attempt**. **Study outcome:** computed from the final outcomes of the two
+runs (across attempts): NOT REPRODUCED if either run is, else NO RESULT if either is,
+else INCONCLUSIVE if either is, else REPRODUCED. A refusal by the time rule (exit 3,
+NOT_STARTED in the log) is NO RESULT.
 
 **What an outcome means.** REPRODUCED or INCONCLUSIVE reproduces the archived artefacts
 and their registered labels on aarch64; it is not a new statistical confirmation, and
@@ -171,7 +174,7 @@ directory:
 ```bash
 WORK=<new attempt dir> COMMIT=<freeze commit> PYBIN=<reviewed CPython 3.12.15> \
 CORES_C=<cpu list> CORES_R=<cpu list> END_EPOCH=<end of access, Unix s> \
-  bash run_arm_repro.sh        # RUNS="correlated" for a restart of one run
+  setsid nohup bash run_arm_repro.sh </dev/null >/dev/null 2>&1 &   # RUNS="correlated" for a restart
 ```
 
 It (1) refuses an existing `WORK`; (2) clones the repository once per run at `COMMIT` and
@@ -207,7 +210,7 @@ host; the probe projects from a reduced load grid, so s is approximate).
 | confirmatory | 4 | 1.9 h | 58 min | 39 min |
 | correlated | 2 | 6.4 h | 3.2 h | 2.1 h |
 | both, concurrent (the protocol) | 4 + 2 | 6.4 h | 3.2 h | 2.1 h |
-| both, 10 + 30 workers (not the protocol) | 40 | 47 min | 23 min | 16 min |
+| both, 10 + 30 workers (worker rule only) | 40 | 47 min | 23 min | 16 min |
 
 The earlier planning figure « 30 to 60 min with 10 workers » holds for the confirmatory
 run alone at s ≥ 1 (≤ 2 791 s / s), not for both runs at s = 1 with 10 workers (about
@@ -227,7 +230,9 @@ Grace.
 - **Freeze (TBD-5):** this file, `check_arm_repro.py` and the reviewed
   `requirements-aarch64.lock` of this directory merged on `main`, then an annotated tag
   and its Software Heritage revision, all before the first run; the hashed lock is added
-  by a later commit of this branch, before the freeze. Nothing under `code/`, `data/`,
+  by a later commit of this branch, before the freeze; the freeze also covers
+  `run_arm_repro.sh` and is cut from `main` as it stands at that moment (if PR #5 is
+  merged first, its README line is part of the frozen tree; it touches no criterion). Nothing under `code/`, `data/`,
   `article/` or `README.md` changes.
 - **Before the freeze, still to add on this branch:** `requirements-aarch64.lock` (all
   packages and transitive dependencies, exact versions, wheel hashes) and the CPython

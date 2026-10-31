@@ -31,3 +31,15 @@ a disclosed limitation, not a fix.
 | P10 | manifests not executed | confirmed | both manifests checked by the wrapper |
 | I1 | « bit level » wording | confirmed | « strict tolerance »; REPRODUCED is not bit identity |
 | I2 | « claims stand » must keep the m = 0.30 reservation | confirmed | section 6 |
+
+**Check of the corrections (2026-10-31, late evening):** one independent Claude reviewer
+(critic) on head `36de371`, with 55 counterexamples on copies of `data/` (53 as
+expected). Confirmed and fixed: any checker exception exited 1 like INCONCLUSIVE (now
+exit 5; truncated gzip gives NO RESULT); the wrapper made a figure-only failure NO
+RESULT while TBD-6 proposed otherwise (TBD-6 now says NO RESULT); the worker rule ignored
+the core lists and the time rule used the mean task (core count checked, rounds x 1.6);
+a strict subset of cells was NO RESULT (now NOT REPRODUCED when the runner exited 0);
+attempt aggregation undefined (last permitted attempt counts); time-rule refusal exited
+0; `--manifest` optional; `shasum` replaced by `sha256sum`; `inherit_errexit`; the
+freeze list now names the wrapper. Open, not fixed here: no expected x86 value for the
+RNG witness; whether `python-dateutil` 3.0.0 needs `tzdata` (resolved with the lock).

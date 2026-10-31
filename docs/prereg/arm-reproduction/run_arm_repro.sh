@@ -13,6 +13,7 @@
 # Optional: RUNS="confirmatory correlated" (a restart may name one run),
 #   EXPECTED_PY=3.12.15, REPO_URL.
 set -euo pipefail
+shopt -s inherit_errexit
 : "${WORK:?}" "${COMMIT:?}" "${PYBIN:?}" "${CORES_C:?}" "${CORES_R:?}" "${END_EPOCH:?}"
 RUNS=${RUNS:-confirmatory correlated}
 EXPECTED_PY=${EXPECTED_PY:-3.12.15}
@@ -34,8 +35,8 @@ for run in $RUNS; do
   git clone -q "$REPO_URL" "$WORK/$run"
   git -C "$WORK/$run" checkout -q "$COMMIT"
   git -C "$WORK/$run" diff --quiet submission-20261031 HEAD -- code/ data/ article/
-  (cd "$WORK/$run/code" && shasum -a 256 -c CODE_SHA256_AT_TAG.txt) >> "$R/manifests.txt"
-  (cd "$WORK/$run/data" && shasum -a 256 -c MANIFEST.sha256) >> "$R/manifests.txt"
+  (cd "$WORK/$run/code" && sha256sum -c CODE_SHA256_AT_TAG.txt) >> "$R/manifests.txt"
+  (cd "$WORK/$run/data" && sha256sum -c MANIFEST.sha256) >> "$R/manifests.txt"
 done
 FIRST=$(echo "$RUNS" | awk '{print $1}')
 P="$WORK/$FIRST/docs/prereg/arm-reproduction"
@@ -68,20 +69,24 @@ workers_for() {  # run -> README count, or one task per worker if the probe proj
   per=$("$PY" -I -c "import json,sys; d=json.load(open(sys.argv[1]));
 print(int(d['projected_task_seconds']*10) if sys.argv[2]=='confirmatory'
       else int(d['projected_total_hours_2_workers']*2*3600))" "$out" "$run")
-  local w=${README_W[$run]}
+  local w=${README_W[$run]} n
   if [ $(( per / w )) -gt $(( ${WALL_CAP[$run]} / 2 )) ]; then w=${TASKS[$run]}; fi
-  echo "$w $per"
+  n=$(taskset -c "${CORES[$run]}" nproc)
+  [ "$n" -ge "$w" ] || { echo "$run: core list has $n cores < $w workers" >> "$R/driver.log"; return 2; }
+  # wall ~ ceil(tasks / w) rounds of the mean task, x 1.6 for the longest task
+  echo "$w $(( ( (${TASKS[$run]} + w - 1) / w ) * per / ${TASKS[$run]} * 16 / 10 ))"
 }
 
 declare -A PIDS W
 need=0
 for run in $RUNS; do
-  read -r w per < <(workers_for "$run"); W[$run]=$w
-  log "probe $run: projected task-seconds $per, workers $w"
-  t=$(( per / w )); [ "$t" -gt "$need" ] && need=$t
+  out=$(workers_for "$run") || { log "probe or worker rule failed for $run"; exit 2; }
+  read -r w t <<< "$out"; W[$run]=$w
+  log "probe $run: workers $w, projected wall ${t}s (see probe-$run.json)"
+  [ "$t" -gt "$need" ] && need=$t
 done
 [ $(( $(date +%s) + 3 * need / 2 )) -le $(( END_EPOCH - 7200 )) ] \
-  || { log "time rule: not started (needs ~${need}s x 1.5)"; exit 0; }
+  || { log "time rule: NOT_STARTED (needs ~${need}s x 1.5)"; exit 3; }
 
 for run in $RUNS; do
   log "start $run workers ${W[$run]} cores ${CORES[$run]}"
@@ -102,20 +107,21 @@ for run in $RUNS; do
     log "$run: runner failed or hit its wall cap -> NO_RESULT"; V[$run]=3; continue
   fi
   if [ -e "$res/cells.jsonl.gz" ]; then log "$run: stale cells.jsonl.gz -> NO_RESULT"; V[$run]=3; continue; fi
-  gzip -k "$res/cells.jsonl"
+  gzip -k "$res/cells.jsonl" || { log "$run: gzip failed -> NO_RESULT"; V[$run]=3; continue; }
   (cd "$WORK/$run/code" && "$PY" -I scripts/compare_nh01.py "../data/nh01_$run" "results/nh01_$run" "$R/cmp-$run.json") \
     > "$R/cmp-$run.log" 2>&1 || log "$run: compare_nh01 failed (descriptive only, e.g. no figure)"
   set +e
   "$PY" -I "$P/check_arm_repro.py" "nh01_$run" "$WORK/$run/data/nh01_$run" "$res" \
-    "$R/verdict-$run.json" --manifest "$WORK/$run/data/MANIFEST.sha256" >> "$R/verdict.log"
+    "$R/verdict-$run.json" --manifest "$WORK/$run/data/MANIFEST.sha256" >> "$R/verdict.log" 2>&1
   V[$run]=$?; set -e
+  [ -f "$R/verdict-$run.json" ] || V[$run]=5   # no report: checker failure
   log "$run: checker exit ${V[$run]}"
 done
 # study outcome: NOT_REPRODUCED > NO_RESULT > INCONCLUSIVE_STRICT > REPRODUCED
 study=REPRODUCED
 for run in $RUNS; do case ${V[$run]} in
   2) study=NOT_REPRODUCED ;;
-  3|4) [ "$study" != NOT_REPRODUCED ] && study=NO_RESULT ;;
+  3|4|5) [ "$study" != NOT_REPRODUCED ] && study=NO_RESULT ;;
   1) [ "$study" = REPRODUCED ] && study=INCONCLUSIVE_STRICT ;;
 esac; done
 log "study outcome for runs [$RUNS]: $study"

@@ -10,7 +10,7 @@ Usage:
 
 <run> is ``nh01_confirmatory`` or ``nh01_correlated``. Exit status:
 0 REPRODUCED, 1 INCONCLUSIVE_STRICT, 2 NOT_REPRODUCED, 3 NO_RESULT,
-4 invalid reference or arguments. The JSON report is written in every case
+4 invalid reference or arguments, 5 checker error (report written when possible). The JSON report is written in every case
 where the arguments could be parsed.
 
 ``compare_nh01.py`` stays the descriptive comparator. This script adds the
@@ -147,7 +147,7 @@ def main():
     ap.add_argument("committed", type=Path)
     ap.add_argument("rerun", type=Path)
     ap.add_argument("out", type=Path)
-    ap.add_argument("--manifest", type=Path, default=None)
+    ap.add_argument("--manifest", type=Path, required=True)
     ap.add_argument("--strict", type=float, default=1e-12)
     ap.add_argument("--band", type=float, default=1e-9)
     a = ap.parse_args()
@@ -169,7 +169,7 @@ def main():
         sa = jload((a.committed / "summary.json").read_text())
         if da or not ca or not isinstance(sa, dict):
             raise InvalidInput("reference empty, duplicated or malformed")
-    except (OSError, ValueError, InvalidInput) as exc:
+    except (OSError, ValueError, EOFError, InvalidInput) as exc:
         return finish("INVALID", 4, f"reference: {exc}")
     try:
         cb, db = load_cells(a.rerun / "cells.jsonl.gz", has_m)
@@ -178,15 +178,13 @@ def main():
             raise InvalidInput("summary is not an object")
     except InvalidInput as exc:  # readable, but a field differs in type or validity
         return finish("NOT_REPRODUCED", 2, f"rerun schema: {exc}")
-    except (OSError, ValueError) as exc:  # missing or unparseable files
+    except (OSError, ValueError, EOFError) as exc:  # missing, truncated or unparseable
         return finish("NO_RESULT", 3, f"rerun unreadable: {exc}")
     ka, kb = set(ca), set(cb)
     rep.update({"n_cells": [len(ca), len(cb)], "duplicate_keys": db,
                 "missing_keys": len(ka - kb), "extra_keys": len(kb - ka),
                 "missing_examples": [dict(k) for k in sorted(ka - kb, key=repr)[:5]],
                 "extra_examples": [dict(k) for k in sorted(kb - ka, key=repr)[:5]]})
-    if kb < ka and not db:
-        return finish("NO_RESULT", 3, "rerun incomplete (strict subset of the reference cells)")
     rep.update({"discrete_mismatch": {}, "nan_pattern_mismatch": {},
                 "unexpected_fields": [], "float_max_abs_diff": {},
                 "float_max_abs_diff_at": {}, "summary_exact_mismatch": [],
@@ -224,5 +222,15 @@ def main():
     return finish("NOT_REPRODUCED", 2, "exact field, key or label difference, or float difference > band")
 
 
+def guarded():
+    try:
+        return main()
+    except SystemExit:
+        raise
+    except BaseException as exc:  # never let a crash look like exit 1
+        print(json.dumps({"verdict": "CHECKER_ERROR", "reason": repr(exc)}))
+        return 5
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(guarded())
