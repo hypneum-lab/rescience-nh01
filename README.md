@@ -36,15 +36,17 @@ rescience-nh01/
 │   ├── metadata.yaml          ReScience metadata (template fields)
 │   ├── article.md             Markdown source of the article (edit this)
 │   ├── content.tex            generated: pandoc -f markdown --biblatex article.md, \autocite → \supercite
-│   ├── bibliography.bib       5 entries
-│   ├── figures/               figure-{pilot,confirmatory,correlated}.png (= data/*/figure.png)
+│   ├── bibliography.bib       8 entries
+│   ├── figures/               figure-pilot.png (= data/nh01/figure.png); figure-{confirmatory,correlated}.png
+│   │                          rendered by code/scripts/publication_figures.py from data/*/cells.jsonl.gz
 │   ├── article.tex            template + longtable/booktabs/amssymb and the pandoc helpers (3 lines)
 │   └── header.tex, rescience.cls, article.py, yaml-to-latex.py, Makefile, COPYING, fonts/
 │                              from github.com/ReScience/template (0978d0e); Makefile adds the article.md → content.tex rule
 ├── code/
 │   ├── experiments/nh01_hopfield_dream/   run.py, confirmatory.py, correlated.py (verbatim, tag prereg-nh01-correlated-20261027)
-│   ├── tests/                 3 files, 20 unit tests
-│   ├── scripts/               compare_nh01.py (cell-by-cell check), rerun_nh01.sh (provenance wrapper)
+│   ├── tests/                 3 files, 20 test functions (23 cases)
+│   ├── scripts/               compare_nh01.py (cell-by-cell check), rerun_nh01.sh (provenance wrapper),
+│   │                          publication_figures.py (article figures, pinned numpy/matplotlib)
 │   ├── requirements.txt       numpy==2.5.4 matplotlib==3.11.2 pytest==9.1.1
 │   ├── run.sh                 reproduces the confirmatory and correlated grids (exact seeds/parameters)
 │   ├── CODE_SHA256_AT_TAG.txt
@@ -54,7 +56,9 @@ rescience-nh01/
 │   ├── nh01/                  pilot, N ∈ {64, 128, 256}, 28 080 cells
 │   ├── nh01_confirmatory/     N = 1 000, independent patterns, 9 120 cells
 │   └── nh01_correlated/       N = 1 000, m ∈ {0, 0.15, 0.30}, 29 640 cells
-└── prereg/                    the three frozen pre-registration files (verbatim) + README.md
+├── prereg/                    the three frozen pre-registration files (verbatim) + README.md
+└── review/                    two independent automated review passes (2026-10-31): briefs, reports,
+                               verdict table, article as it stood before the review + README.md
 ```
 
 ## Upstream provenance
@@ -113,6 +117,20 @@ cd article && make          # xelatex + biber; needs Python 3 + PyYAML (yaml-to-
 3.12, `--biblatex`, `\autocite` → `\supercite`, drops the References section);
 rerun it after editing `article.md`. Build checked 2026-10-31 with
 TeX Live 2026 (XeLaTeX + Biber): 10 pages, 8 references, no LaTeX error.
+
+## Independent review before submission
+
+Before any human review, the package went through two automated review
+passes on 2026-10-31 (Codex CLI, `gpt-6.1-sol` blind on the repositories,
+then `gpt-6-astra` cross-checking the corrected package and the verdict
+table). Every finding was verified against the cells, the summaries, the
+runner code and the original paper before a line was changed; the PI
+decided the open points. Pass 1 found one blocking statement in the
+conclusion (fixed) and confirmed every number by independent recount;
+pass 2 found one more numerical error (fixed) and argued for publishing
+the registered m = 0.30 ratio next to its reservation. Briefs, reports,
+verdicts and the pre-review article are in `review/`. The commits are
+`1f7c6b6` (pass 1) and `d78590c` (pass 2).
 
 ## Expected headline numbers (from `data/*/summary.json`)
 
