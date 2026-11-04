@@ -1,6 +1,6 @@
 # Amendment 1 (2026-11-04) — tolerance of the aarch64 reproduction protocol
 
-**Status:** DRAFT for PI review, on local branch `amend-noise-20261104`, not pushed, not tagged.
+**Status:** tolerance decided by the PI on 2026-11-04 (1e-10); local branch `amend-noise-20261104`, not pushed, not tagged.
 **Amends:** `protocol.md` section 6 and decision D1/D2 (frozen under tag
 `arm-repro-gb300-freeze-20261031`, commit `e03031c`). The frozen files are not edited;
 this amendment is a separate dated file.
@@ -61,7 +61,7 @@ is not recorded in `data/`).
    hoc by construction.
 3. No discrete outcome, key, label or summary leaf differs on either run.
 
-## 4. Proposed tolerance (to be confirmed by the PI)
+## 4. Tolerance (decided by the PI on 2026-11-04: 1e-10)
 
 **Rule:** the cross-platform tolerance is the smallest power of 10 that is at least
 10 x the largest inter-platform bounded difference observed (both runs, all bounded
@@ -81,7 +81,7 @@ the reference host**, where the measured noise is 0.
 
 ## 5. Effect on the verdict
 
-- Under the amended cross-platform tolerance of 1e-10 (or 1e-11), both GB300 runs give
+- Under the amended cross-platform tolerance of 1e-10, both GB300 runs give
   REPRODUCED, every exact field being identical: study outcome « REPRODUCED under an
   amended, post hoc tolerance ».
 - The original verdict under the frozen protocol remains **INCONCLUSIVE_STRICT** and is
