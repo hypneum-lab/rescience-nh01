@@ -10,6 +10,7 @@ Copied unchanged from `results/nh01*/` of hypneum-lab/nerve-wml at commit
 | `nh01/` | pilot, N ∈ {64, 128, 256}, seeds 0–9 | `prereg-nh01-hopfield-dream-20261025` | 28 080 | 1 547 s |
 | `nh01_confirmatory/` | N = 1 000, independent patterns, seeds 0–9 | `prereg-nh01-confirmatory-20261025` | 9 120 | 6 951 s |
 | `nh01_correlated/` | N = 1 000, m ∈ {0, 0.15, 0.30}, seeds 100–109 | `prereg-nh01-correlated-20261027` | 29 640 | 22 866 s |
+| `nh01_diagonal_ablation/` (v2, post-freeze) | N = 1 000, T = 0, self-coupling kept vs removed, seeds 200–209 | `prereg-nh01-diagonal-20261031` | 4 800 | 901 s |
 
 Files per run: `cells.jsonl.gz` (one JSON record per cell), `summary.json`
 (per-condition estimates, bootstrap intervals, verdict), `figure.png`,
@@ -18,6 +19,17 @@ Files per run: `cells.jsonl.gz` (one JSON record per cell), `summary.json`
 clean clone at the tag: `comparison.json` (9 120/9 120 and 29 640/29 640
 cells identical except `task_seconds`, figure byte-identical), `launch.txt`,
 `uv_pip_freeze.txt`, `code_sha256_at_tag.txt`, `outputs_sha256.txt`.
+
+`nh01_diagonal_ablation/` was added in version 2 of the article, after
+the freeze of the submission package. It is copied from
+`results/nh01_diagonal_ablation/` of nerve-wml at commit `d6c42c2`
+(2026-10-31) with one change of form: `cells.jsonl` is stored gzipped
+(`gzip -n`) as `cells.jsonl.gz`; the upstream `SHA256SUMS`, which lists the
+uncompressed `cells.jsonl`, is kept and matches `gunzip -c cells.jsonl.gz`.
+The directory also keeps the upstream `launch_record.md` (freeze times,
+code hashes, launch command). It has no runner figure; the article figure
+is rendered by `code/scripts/figure_diagonal_ablation.py`. These data are
+not in the Zenodo version cited below.
 
 Caveat: `nh01_correlated/summary.json` and `figure.png` carry the automatic
 label `confirme` for the m = 0.30 level; the article keeps that registered label (T = 0 ratio 44.38 [42.56, 46.97],
