@@ -5,7 +5,7 @@ note: >
   Markdown source of content.tex for the ReScience C template (regenerated
   by md2tex.sh). Every number is read from a file of data/ of this
   repository (copied from hypneum-lab/nerve-wml); the short identifiers
-  D1-D3 and S1-S3 refer to the provenance table of the Appendix.
+  D1-D4 and S1-S4 refer to the provenance table of the Appendix.
 ---
 
 # Introduction
@@ -138,7 +138,12 @@ dynamics is invariant under $c > 0$, so the control must give a ratio of
 exactly 1 (an implementation check, not an empirical hypothesis); at $T > 0$,
 $J_c$ at inverse temperature $\beta$ has the same transition probabilities as
 $J$ at $c\beta$, i.e. the control is the Hebbian network at temperature
-$T/c$. This identity does not impose a deterministic inequality on a
+$T/c$. (The same rescaling of $\beta$ makes the $(1+t)$-normalised kernel
+used here and its unnormalised ridge form statistically equivalent: their
+partition functions coincide up to $\beta \to \beta (P/N)(1+t)/t$, as noted
+by Agliari et al. [@agliari2024regularization] in their footnote 9 and in
+footnote 2, p. 117, of Aquaro's thesis [@aquaro2025thesis]; at $T = 0$ the
+normalisation has no effect.) This identity does not impose a deterministic inequality on a
 finite-time, thresholded, single-realisation capacity estimate (in the pilot,
 seed 6 at $N = 256$, $T = 0.2$ gives a shrink ratio of 1.012), so the effect
 at $T = 0.2$ is measured empirically.
@@ -193,11 +198,23 @@ no single step exceeded 0.05.
    capacities are therefore not comparable with the published curve; the
    replication tests ratios and qualitative claims (gain, spurious removal,
    projector limit).
-2. Self-coupling removed ($J_{ii} = 0$) in all arms: standard for retrieval
-   dynamics; it changes the update fields relative to the original rule,
-   whose field sums over $j = 1 \dots N$. We did not run an ablation with the
-   diagonal kept, so its contribution to the finite optimum in $t$ reported
-   below is not isolated.
+2. Self-coupling removed ($J_{ii} = 0$) in all arms, as in the
+   sequential-dynamics algorithms of the original group's later numerical
+   work, which begin with "Remove the diagonal terms from $J$" (Algorithm 1
+   of Agliari et al. [@agliari2024hebbian], Algorithm 2 of Agliari et al.
+   [@agliari2024regularization] as numbered in arXiv:2308.01421v2,
+   Algorithms 4 and 7 of Aquaro's thesis [@aquaro2025thesis]), and as
+   required for detailed balance under sequential updates (Proposition
+   1.3.1 of the same thesis); the field printed in the original article sums over
+   $j = 1 \dots N$ (their Eq. 2.16). For $\pm1$ spins the diagonal only adds
+   the configuration-independent constant $-\frac12\sum_i J_{ii}$ to the
+   energy; it acts through the zero-temperature update rule and hence
+   through the capacity estimator. After the freeze of this package we
+   pre-registered and ran an ablation keeping the diagonal (Section
+   "Self-coupling convention", Table \ref{tbl:diag}, Figure \ref{fig:diagonal}):
+   the dream/Hebb ratio depends on the convention used in both arms, and
+   the contribution of the self-coupling removal to the finite optimum in
+   $t$ is not isolated (registered test C5 inconclusive).
 3. Dynamics and success criterion: asynchronous updates at $T = 0$ instead
    of the parallel sign update of the original zero-noise field and basin
    experiments (their Eq. 2.17); a fixed number of
@@ -320,6 +337,75 @@ matched by key, NaN compared as NaN); `summary.json` identical except its
 `de3ee720…`). The re-runs used 2 worker processes instead of 4 for the
 confirmatory run; the worker count changes only the scheduling.
 
+## Self-coupling convention (post-freeze ablation)
+
+This subsection reports a study run after the submission package was
+frozen on 2026-10-31; every number above is unchanged. A
+fourth L1 pre-registration (S4: hypneum-lab/nerve-wml, tag
+`prereg-nh01-` `diagonal-20261031`, 2026-10-31 16:38:17 UTC; run launched
+58 s later; data D4) compares, at $N = 1\,000$, $T = 0$, on new seeds
+200–209, two arms at every $t$ of the confirmatory grid: `dream_offdiag`,
+an exact replica of the confirmatory dream arm ($J_{ii}(t) = 0$), and
+`dream_diag`, in which the diagonal of $J(t)$ is kept in the update field,
+as in the field printed in the original article. At $t = 0$ each arm is
+the Hebbian kernel in its own convention ($J_{ii} = P/N$ kept in
+`dream_diag`). Cues, dynamics, estimator and bootstrap are those of the
+confirmatory run; 4 800 cells, no non-converged probe, no right-censored
+estimate.
+
+The registered question was the cause of the finite optimum $t^* = 7$,
+through the per-seed drop $D = \hat\alpha_c(7) - \hat\alpha_c(100)$. The
+positive control passed ($D$ = 0.086 [0.082, 0.090] in `dream_offdiag`,
+overlapping the confirmatory 0.088 [0.082, 0.092]). **C5** (primary):
+$D$ = 0.048 [0.043, 0.054] in `dream_diag`, **inconclusive** under the
+registered thresholds ($\le 0.020$ for "cause", $\ge 0.050$ with a lower
+bound above 0.020 for "not the cause"). **C6** (secondary): the paired
+difference of the drops is 0.038 [0.032, 0.043], positive on 10/10 seeds:
+removing the self-coupling contributes to the drop between $t = 7$ and
+$t = 100$, but whether it causes the finite optimum is not decided. With
+the diagonal kept the curve has another shape (Figure \ref{fig:diagonal}):
+it peaks on the grid at $t = 1$ (all ten seeds; the only grid point
+strictly between 0 and 3 is $t = 1$) and then decreases monotonically to 0.441 (median) at
+$t = 100$.
+
+The headline ratio depends on the convention used in both arms
+(Table \ref{tbl:diag}). The ablation did not register C1; its thresholds
+are applied here as a reading aid only.
+
+Table: Dream/Hebb capacity ratio at $T = 0$, $t = 10$, by self-coupling
+convention. Mean over seeds, 95 % seed-level percentile bootstrap (10 000
+resamples, seed 20261025); D2: confirmatory run, D4: ablation. {#tbl:diag}
+
+| Convention (both arms) | Seeds | Hebb $\hat\alpha_c$ | dream $\hat\alpha_c$, $t = 10$ | Ratio | Reading under rule C1 |
+|---------|------|----------|----------|---------|----------|
+| $J_{ii} = 0$ (D2, this article) | 0–9 | 0.157 [0.155, 0.160] | 0.607 [0.604, 0.610] | **3.86 [3.79, 3.93]** | confirmed (registered) |
+| $J_{ii} = 0$ (D4) | 200–209 | 0.157 [0.155, 0.159] | 0.611 [0.607, 0.614] | **3.90 [3.86, 3.94]** | above the C1 threshold (descriptive) |
+| diagonal kept (D4) | 200–209 | 0.251 [0.246, 0.256] | 0.477 [0.475, 0.480] | **1.90 [1.86, 1.95]** | neither confirmed nor refuted under rule C1 |
+
+Note to the table: a mixed ratio, the kept-diagonal dreamed capacity over
+the zero-diagonal Hebbian baseline, is 3.05 [3.00, 3.09]; it corresponds
+to no published protocol and is given for completeness only. Student-$t$
+intervals, as quoted in our comment on the submission issue, are
+[1.85, 1.96] for the kept-diagonal ratio and [2.99, 3.10] for the mixed
+one. For the kept-diagonal convention the lower bound 1.86 is below the
+confirmation threshold 3 and the paired difference, 0.226 [0.220, 0.233],
+is above the refutation bound 0.1.
+
+The diagonal acts in opposite directions on the two arms. In the Hebbian
+baseline the self-coupling $J_{ii} = P/N$ adds an inertia term to every
+field and raises the noisy-cue estimate from 0.157 to 0.251 (at
+$\alpha = 0.20$, 298/320 probes retrieved against 3/320 with $J_{ii} = 0$);
+in the dreamed kernel at $t = 10$ it lowers the estimate from 0.611 to
+0.477. At high load the kept-diagonal arm freezes near the cue: at $t = 7$,
+$\alpha = 0.50$ it retrieves 129/320 probes (318/320 with $J_{ii} = 0$)
+with a mean overlap of 0.90 with the cued pattern, against a retrieval
+threshold of 0.9 and a cue overlap of 0.80, so in that arm
+$\hat\alpha_c$ depends on the threshold more than in the zero-diagonal
+arm. The ablation does not test cue noise, synchronous dynamics, finite
+$N$, $T = 0.2$, correlated patterns or the matched-shrink control.
+
+![Post-freeze self-coupling ablation, $N = 1\,000$, $T = 0$, seeds 200–209 (D4; rendering by `code/scripts/figure_diagonal_ablation.py` from `summary.json`). (a) Empirical capacity versus dreaming time for the zero-diagonal arm (`dream_offdiag`, the protocol of this article, circles) and the kept-diagonal arm (`dream_diag`, squares); the leftmost point of each curve is the Hebbian kernel in the same convention; the dotted vertical line marks the registered $t^* = 7$. (b) Ratio to the Hebbian baseline, each arm over its own $t = 0$ point; grey: mixed ratio of the kept-diagonal dream to the zero-diagonal Hebbian baseline, which corresponds to no published protocol; the dotted line is the C1 threshold 3.0. Error bars: 95 % seed-level percentile bootstrap.](figures/figure-diagonal.png){#fig:diagonal width=100%}
+
 # Conclusion
 
 Under decision rules fixed before each study's main run, this partial
@@ -360,6 +446,23 @@ does quantify retrieval basins, at $N = 1\,000$ and $\alpha = 0.05$ under
 parallel zero-noise dynamics, and finds them stabilised by dreaming; that
 experiment does not cover our higher-load protocol.
 
+The $t^*$ of this article is a dreaming time. It differs from the
+early-stopping time
+$t^*(t_d) \approx (2\bar\lambda)^{-1}\log(1 + t_d\bar\lambda)$, with
+$\bar\lambda$ the mean eigenvalue of the empirical correlation matrix of
+the stored vectors (Eq. 4.50 of Aquaro's thesis [@aquaro2025thesis]),
+which is a training time. In the equivalence established by Agliari et
+al. [@agliari2024regularization] the dreamed kernel with dreaming time
+$t_d$ is the ridge estimator with Tikhonov parameter $\epsilon_J = 1/t_d$,
+and $t^*(t_d)$ is the time at which unregularised gradient descent must
+be stopped to approximate it. Under that identity a finite optimal
+dreaming time reads as a finite optimal regularisation strength; this is
+a reading, not a result of this study. The same group reports that, when
+the stored vectors are noisy examples of archetypes, too long a dreaming
+time leads to overfitting (their Sections 4 and 5); that
+mechanism has no direct counterpart in our protocol, whose stored
+patterns are noise-free and whose noise is in the cue.
+
 Recent work situates these observations. Benedetti et al.
 [@benedetti2024eigenvector] follow the eigenvectors of the coupling matrix
 during unlearning, the spectral reading that distinguishes dreaming from a
@@ -394,6 +497,11 @@ Software Heritage snapshot
 (visit 2026-10-29) holds the three tags as releases; the data are archived
 at Zenodo under DOI 10.5281/\allowbreak{}zenodo.23833431 (nerve-wml v1.10.0, concept DOI
 10.5281/\allowbreak{}zenodo.19656342).
+
+The post-freeze ablation adds its pre-registration (S4) and its data (D4,
+not in that Zenodo version). They were produced by the runner
+`diagonal_ablation.py` of hypneum-lab/nerve-wml at the tag of S4, which
+imports the frozen `run.py` unchanged (identical SHA-256).
 
 Environment: Python 3.12.15, numpy 2.5.4, matplotlib 3.11.2 (full freeze in
 the re-run provenance directory of D2 and D3), single-threaded BLAS
@@ -450,10 +558,12 @@ covered by the internal re-run.
 | D1 | pilot, $N \in \{64, 128, 256\}$, 28 080 cells | `data/nh01/` (`summary.json`, `cells.jsonl.gz`, `run_meta.json`, `figure.png`, `SHA256SUMS`) |
 | D2 | confirmatory, $N = 1\,000$, 9 120 cells, re-run provenance | `data/nh01_confirmatory/` (same files; `provenance-rerun-` `20261030/`) |
 | D3 | correlated, $N = 1\,000$, 29 640 cells, re-run provenance | `data/nh01_correlated/` (same files; `provenance-rerun-` `20261030/`) |
+| D4 | post-freeze self-coupling ablation, $N = 1\,000$, 4 800 cells (nerve-wml commit `d6c42c2`) | `data/nh01_diagonal_` `ablation/` (`summary.json`, `cells.jsonl.gz`, `run_meta.json`, `run.log`, `launch_record.md`, `SHA256SUMS`) |
 | S1 | runners `run.py`, `confirmatory.py`, `correlated.py` at the correlated tag | `code/experiments/` `nh01_hopfield_dream/`; hashes in `code/` `CODE_SHA256_AT_TAG.txt` |
 | S2 | unit tests (20 functions, 23 cases) | `code/tests/` `test_nh01_hopfield_dream.py` |
 | S3 | the three pre-registrations, verbatim copies of the tagged files (tag names in `prereg/README`) | `prereg/` |
-| F | publication rendering of the figures | `code/scripts/` `publication_figures.py` |
+| S4 | post-freeze pre-registration of the self-coupling ablation, verbatim copy at tag `prereg-nh01-` `diagonal-` `20261031` (revision `swh:1:rev:` `6e1b006…`) | `prereg/2026-10-31-` `nh01-diagonal-ablation.md` |
+| F | publication rendering of the figures | `code/scripts/` `publication_figures.py`; `code/scripts/` `figure_diagonal_ablation.py` (D4) |
 
 # AI usage
 
@@ -485,3 +595,14 @@ Claude Code (Anthropic) was used as a tool for the code, the documentation and d
   recall of memory without errors. *Phys. Rev. A* 35, 380.
 - [@tononi2014shy] Tononi G., Cirelli C. (2014). Sleep and the price of
   plasticity. *Neuron* 81, 12–34.
+- [@agliari2024hebbian] Agliari E., Alemanno F., Aquaro M., Barra A.,
+  Durante F., Kanter I. (2024). Hebbian dreaming for small datasets.
+  *Neural Networks* 173, 106174. doi:10.1016/j.neunet.2024.106174.
+- [@agliari2024regularization] Agliari E., Alemanno F., Aquaro M.,
+  Fachechi A. (2024). Regularization, early-stopping and dreaming: a
+  Hopfield-like setup to address generalization and overfitting. *Neural
+  Networks* 177, 106389. doi:10.1016/j.neunet.2024.106389.
+  arXiv:2308.01421.
+- [@aquaro2025thesis] Aquaro M. (2025). Applications of spin glass theory
+  in neural networks and evolutionary models. PhD thesis, Sapienza
+  Università di Roma. hdl:11573/1739810.
