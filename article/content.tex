@@ -221,25 +221,61 @@ why}\label{what-was-changed-with-respect-to-the-original-and-why}
   curve; the replication tests ratios and qualitative claims (gain,
   spurious removal, projector limit).
 \item
-  Self-coupling removed (\(J_{ii} = 0\)) in all arms, as in the
-  sequential-dynamics algorithms of the original group's later numerical
-  work, which begin with ``Remove the diagonal terms from \(J\)''
-  (Algorithm 1 of Agliari et al. \supercite{agliari2024hebbian},
-  Algorithm 2 of Agliari et al. \supercite{agliari2024regularization} as
-  numbered in arXiv:2308.01421v2, Algorithms 4 and 7 of Aquaro's thesis
-  \supercite{aquaro2025thesis}), and as required for detailed balance
-  under sequential updates (Proposition 1.3.1 of the same thesis); the
-  field printed in the original article sums over \(j = 1 \dots N\)
-  (their Eq. 2.16). For \(\pm1\) spins the diagonal only adds the
-  configuration-independent constant \(-\frac12\sum_i J_{ii}\) to the
-  energy; it acts through the zero-temperature update rule and hence
+  Self-coupling removed (\(J_{ii} = 0\)) in all arms. The field printed
+  in the original article sums over \(j = 1 \dots N\) (their Eq. 2.16),
+  and the later work of the original group and its students does not
+  follow a single convention. Some algorithms remove the diagonal before
+  the dynamics: ``Remove the diagonal terms from \(J\)'' opens Algorithm
+  1 of Agliari et al. \supercite{agliari2024hebbian}, Algorithm 2 of
+  Agliari et al. \supercite{agliari2024regularization} as numbered in
+  arXiv:2308.01421v2, where the kernel itself is computed with its
+  diagonal (footnotes 4-5) and the diagonal is zeroed only for the
+  dynamics, and Algorithms 4 and 7 of Aquaro's thesis
+  \supercite{aquaro2025thesis}; a master's thesis supervised by Agliari
+  sets \(J_{ii} = 0\) and leaves it unchanged by unlearning
+  \supercite{canali2017thesis} (Definition 5.1 and Eq. 6.2, pp.~35 and
+  52-56); the zero-temperature update of Agliari et al.
+  \supercite{agliari2026exponential} uses overlaps with site \(i\)
+  excluded (Algorithm 1); and Barra et al.
+  \supercite{barra2025supralinear} subtract the diagonal contributions
+  from their dense Hamiltonian (Eqs. 42-44). Others keep it: the 2022
+  preprint by the same six authors as \supercite{agliari2024hebbian}
+  iterates \(\sigma \leftarrow \operatorname{sign}(J\sigma)\) with the
+  full kernel \supercite{aquaro2022recurrent} (Eqs. 2.41-2.42); the
+  multidirectional dreaming model of Barra et al.
+  \supercite{barra2027dlam} sums over all \(i, j\) (Eq. 4 and Algorithm 1
+  as numbered in arXiv:2605.13721v1); Alemanno's thesis
+  \supercite{alemanno2021thesis} keeps it in the dreamed kernel (Eq.
+  2.29, p.~72) while excluding \(j = i\) from the field of its reference
+  Hopfield model
+
+  (p.~45); and Agliari et al. \supercite{agliari2025empty} include
+  self-interactions in their main analysis (Appendix E), set the
+  diagonal to zero only in the training of their Appendix A, and note
+  that in the Hopfield model the diagonal raises the one-step
+  magnetisation from \(\operatorname{erf}(1/\sqrt{2\alpha})\) to
+  \(\operatorname{erf}((1+\alpha)/\sqrt{2\alpha})\) (footnote 3). None
+  of these works measures the effect of the choice. NH-01 follows the
+  first convention, which is also required for detailed balance under
+  sequential updates (Proposition 1.3.1 of \supercite{aquaro2025thesis}).
+  See also Benedetti et al. \supercite{benedetti2024eigenvector} (Sec.
+  III C), for whom correcting the diagonal once at the end rather than
+  at each step of an unlearning procedure changes which eigenvector is
+  dreamed and lets the negative eigenvalue plateau overtake the positive
+  one (``inversion''), and Krotov and Hopfield
+  \supercite{krotov2016dense} (footnote 1), for whom excluding repeated
+  indices from the energy of a dense associative memory changes the
+  prefactor of its capacity. For \(\pm1\) spins the diagonal only adds
+  the configuration-independent constant \(-\frac12\sum_i J_{ii}\) to
+  the energy; it acts through the zero-temperature update rule and hence
   through the capacity estimator. After the freeze of this package we
   pre-registered and ran an ablation keeping the diagonal (Section
   ``Self-coupling convention'', Table \ref{tbl:diag}, Figure
   \ref{fig:diagonal}): the dream/Hebb ratio depends on the convention
-  used in both arms, and the contribution of the self-coupling removal
-  to the finite optimum in \(t\) is not isolated (registered test C5
-  inconclusive).
+  used in both arms (with the diagonal kept, neither confirmed nor
+  refuted under rule C1, applied as a reading aid), and the contribution
+  of the self-coupling removal to the finite optimum in \(t\) is not
+  isolated (registered test C5 inconclusive).
 \item
   Dynamics and success criterion: asynchronous updates at \(T = 0\)
   instead of the parallel sign update of the original zero-noise field
