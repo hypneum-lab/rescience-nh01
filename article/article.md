@@ -245,7 +245,18 @@ no single step exceeded 0.05.
    None of these texts measures the effect of the convention on a
    dreamed-to-Hebb capacity ratio. NH-01 follows the first
    convention, which is also required for detailed balance under
-   sequential updates (Proposition 1.3.1 of [@aquaro2025thesis]). See also
+   sequential updates (Proposition 1.3.1 of [@aquaro2025thesis]).
+   ReScience C asks that replication work "be based exclusively on the
+   originally published paper, although exceptions are admitted if
+   properly documented in the replication article" [@rougier2017rescience]
+   (p. 4). The convention $J_{ii} = 0$ is such an exception, and we
+   declare it as one: it is taken from the 2024-2025 algorithms of the
+   original group cited above, not from the 2019 article, whose field
+   (Eq. 2.16) keeps the diagonal. Its effect is measured by the
+   post-freeze ablation (Table \ref{tbl:diag}): at $t = 10$ the
+   dream/Hebb ratio is 3.90 with the diagonal zeroed in both arms, 1.90
+   with it kept in both arms, and the mixed ratio (kept-diagonal dream
+   over zero-diagonal Hebb) is 3.05. See also
    Benedetti et al. [@benedetti2024eigenvector] (Sec. III C), for whom
    correcting the diagonal once at the end rather than at each step of an
    unlearning procedure changes which eigenvector is dreamed and lets the
@@ -748,3 +759,6 @@ Claude Code (Anthropic) was used as a tool for the code, the documentation and d
 - [@vinci2025beyond] Vinci G. V., Galluzzi A., Mattia M. (2025). Beyond
   catastrophic forgetting in associative networks with self-interactions.
   arXiv:2504.04560.
+- [@rougier2017rescience] Rougier N. P., Hinsen K., et al. (2017).
+  Sustainable computational science: the ReScience initiative. *PeerJ
+  Comput. Sci.* 3, e142. doi:10.7717/peerj-cs.142. arXiv:1707.04393.
