@@ -226,8 +226,24 @@ no single step exceeded 0.05.
    training of their Appendix A, and note that in the Hopfield model the
    diagonal raises the one-step magnetisation from
    $\operatorname{erf}(1/\sqrt{2\alpha})$ to
-   $\operatorname{erf}((1+\alpha)/\sqrt{2\alpha})$ (footnote 3). None of
-   these works measures the effect of the choice. NH-01 follows the first
+   $\operatorname{erf}((1+\alpha)/\sqrt{2\alpha})$ (footnote 3). Table
+   \ref{tbl:conv} lists fourteen further texts, from the same school and
+   outside it. Two of them compare the two conventions, for the Hebbian
+   kernel only. Folli, Leonetti and Ruocco [@folli2017maximum] keep the
+   diagonal and test whether each stored pattern is a fixed point after
+   one parallel sign update: the diagonal adds $P$ coherent terms to the
+   local field ($N + P - 1$ instead of $N - 1$; Sec. 3.1 and footnote 2,
+   p. 3), and the second region of near-perfect recall that they find at
+   $P \gg N$ disappears when $J_{ii} = 0$ (Fig. 6 and text, p. 6).
+   Vinci, Galluzzi and Mattia [@vinci2025beyond], for deterministic
+   graded units with $J_{ii} = g\alpha$, find an overlap with the
+   pattern used as initial state close to 1 at loads where the same
+   networks with $J_{ii} = 0$ lose recall near $\alpha \approx 0.14$
+   (Fig. 3, p. 5), and critical temperatures of pure and mixture states
+   that are lower when $J_{ii} = 0$ (Fig. 7, p. 9); they mention dreaming
+   only as an alternative that their autapses make unnecessary (p. 10).
+   None of these texts measures the effect of the convention on a
+   dreamed-to-Hebb capacity ratio. NH-01 follows the first
    convention, which is also required for detailed balance under
    sequential updates (Proposition 1.3.1 of [@aquaro2025thesis]). See also
    Benedetti et al. [@benedetti2024eigenvector] (Sec. III C), for whom
@@ -259,6 +275,29 @@ no single step exceeded 0.05.
    seeds, thresholds); one voided launch of the pilot (BLAS thread
    oversubscription, killed after ~150 s before the main run; log kept in
    the upstream repository, D1).
+
+Table: Self-coupling conventions in further texts (complement to item 2;
+pages as printed). "Kept": the sum over $i, j$ includes $i = j$ in the
+energy or the field; "zero": $J_{ii} = 0$ is imposed. No text of this
+table measures the effect of the convention on a dreamed-to-Hebb
+capacity ratio. {#tbl:conv}
+
+| Text | Convention | Where |
+|----------|--------------|----------|
+| Albanese et al. 2026 [@albanese2026serial], Hebbian BEG networks | kept, stated as "autapses"; the authors "speculate" that autapses contribute to the absence of a blackout catastrophe, citing [@vinci2025beyond] | Eqs. (2.2), (2.18), pp. 3, 6; Fig. 4 caption, p. 13; Fig. 7 discussion, p. 29 |
+| Albanese, Barra, Cirillo 2025 [@albanese2025guerra], Gaussian couplings | zero, by definition | Definition 1, p. 3 |
+| Agliari, Duarte Mourão, Fachechi, Vivo 2026 [@agliari2026spectral] | zero in the four matrices studied; the replica computation is done with the diagonal, then removed as a shift of the spectrum ($\bar\lambda(t)$ for the dreamed kernel, Lemma 1 and Theorem 1): a result on the limiting spectral density, not on fixed points | Eqs. (3), (5), (7), (8) and note 2, p-2; SM pp. p-13 to p-16 |
+| Agliari, Alessandrelli, Barra, Fachechi 2026 [@agliari2026dense] | kept, repeated indices included | Eqs. (2.2)-(2.4), p. 3 |
+| Agliari, Alessandrelli, Duarte Mourão, Fachechi 2025 [@agliari2025multichannel] | kept in the intra-layer field $J\sigma$, $J = N^{-1}\xi\xi^{\mathsf T}$ | p. 2 |
+| Agliari, Lepre, Roscani 2026 [@agliari2026modular] | kept, prefactor $1/(2N)$ | Eq. (2.2), p. 3 |
+| Agliari et al. 2026 [@agliari2026networks] | kept in the energy and in the field of the dynamics; Appendix H, on the dual of an isolated Hopfield network, writes $i < j$ | Eq. (2.1), p. 2; Eq. (4.3), p. 4; p. 17 |
+| Personnaz, Guyon, Dreyfus 1985 [@personnaz1985information] | projection rule $C = AA^{I}$ with no zeroing of $C_{ii}$ stated; the stability condition $C\sigma^k = \sigma^k$ is written for this full projector | Eq. (6), p. L-362; Eq. (7), p. L-363 |
+| Agliari, Barra, Bianco, Fachechi, Pallara 2026 [@agliari2026infinite] | kept in the Hamiltonian (equilibrium theory) | Eq. (2.1), p. 4 |
+| Benedetti, Ventura, Marinari, Ruocco, Zamponi 2022 [@benedetti2022supervised] | zero: Hebbian $J_{ii} = 0$, reset to 0 after each unlearning step; "autapses" absent | Eq. (3), p. 1; Eq. (9), p. 3; p. 9 |
+| Alemanno 2026 [@alemanno2026attention] | zero in the pairwise model; in the exponential model the self-coupling, "the exponential-model analogue of the diagonal term $J_{ii}$", is kept | Definition 2, p. 3; p. 6; p. 7 |
+| Barra 2008 [@barra2008thesis] | diagonal terms added to a cavity Hamiltonian give a contribution independent of the spins that vanishes after the disorder average (equilibrium, no dynamics) | Eq. (3.134), p. 97 |
+| Folli, Leonetti, Ruocco 2017 [@folli2017maximum] | kept, compared with zero for the Hebbian kernel (one-step stability of stored patterns) | pp. 3, 6 |
+| Vinci, Galluzzi, Mattia 2025 [@vinci2025beyond] | kept ($J_{ii} = g\alpha$), compared with zero for the Hebbian kernel (graded units) | Fig. 3, p. 5; Fig. 7, p. 9 |
 
 # Results
 
@@ -664,3 +703,48 @@ Claude Code (Anthropic) was used as a tool for the code, the documentation and d
 - [@krotov2016dense] Krotov D., Hopfield J. J. (2016). Dense associative
   memory for pattern recognition. *Advances in Neural Information
   Processing Systems* 29, 1172–1180. arXiv:1606.01164.
+- [@albanese2026serial] Albanese L., Alessandrelli A., Barra A., Cirillo
+  E. N. M. (2026). Serial vs parallel recall in the Blume-Every-Griffiths
+  neural networks. arXiv:2601.07777.
+- [@albanese2025guerra] Albanese L., Barra A., Cirillo E. N. M. (2025).
+  Guerra interpolation for inverse freezing. *J. Math. Phys.* 66, 123305.
+  doi:10.1063/5.0280543. arXiv:2505.06202.
+- [@agliari2026spectral] Agliari E., Duarte Mourão P., Fachechi A., Vivo
+  P. (2026). Spectral criteria for generalization in unsupervised Hebbian
+  nets. arXiv:2606.04651.
+- [@agliari2026dense] Agliari E., Alessandrelli A., Barra A., Fachechi A.
+  (2026). Dense auto-hetero associative memories applied to noisy
+  communication channels. arXiv:2609.32605.
+- [@agliari2025multichannel] Agliari E., Alessandrelli A., Duarte Mourão
+  P., Fachechi A. (2025). Multi-channel pattern reconstruction through
+  L-directional associative memories. arXiv:2503.06274.
+- [@agliari2026modular] Agliari E., Lepre A., Roscani E. (2026).
+  Classifications in modular restricted Boltzmann machines.
+  arXiv:2610.08612.
+- [@agliari2026networks] Agliari E., Alessandrelli A., Barra A., Centonze
+  M., Ricci-Tersenghi F. (2026). Networks of Hebbian networks: more is
+  different. *Neural Networks* 194, 108181.
+  doi:10.1016/j.neunet.2025.108181. arXiv:2501.16789.
+- [@personnaz1985information] Personnaz L., Guyon I., Dreyfus G. (1985).
+  Information storage and retrieval in spin-glass like neural networks.
+  *J. Physique Lettres* 46, L359–L365.
+  doi:10.1051/jphyslet:01985004608035900.
+- [@agliari2026infinite] Agliari E., Barra A., Bianco P., Fachechi A.,
+  Pallara D. (2026). The infinite volume limit of the Hopfield neural
+  networks in the replica-symmetric regime. *Ann. Henri Poincaré*.
+  doi:10.1007/s00023-026-01770-4. arXiv:2409.10145.
+- [@benedetti2022supervised] Benedetti M., Ventura E., Marinari E.,
+  Ruocco G., Zamponi F. (2022). Supervised perceptron learning vs
+  unsupervised Hebbian unlearning. *J. Chem. Phys.* 156, 104107.
+  doi:10.1063/5.0084219. arXiv:2201.00032.
+- [@alemanno2026attention] Alemanno F. (2026). Attention over noisy
+  examples: generalization and memorization in the exponential Hopfield
+  network. arXiv:2610.22191.
+- [@barra2008thesis] Barra A. (2008). Mean field spin glasses: exact
+  results without the replica trick. PhD thesis.
+- [@folli2017maximum] Folli V., Leonetti M., Ruocco G. (2017). On the
+  maximum storage capacity of the Hopfield model. *Front. Comput.
+  Neurosci.* 10, 144. doi:10.3389/fncom.2016.00144.
+- [@vinci2025beyond] Vinci G. V., Galluzzi A., Mattia M. (2025). Beyond
+  catastrophic forgetting in associative networks with self-interactions.
+  arXiv:2504.04560.
