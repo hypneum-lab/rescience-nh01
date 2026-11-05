@@ -526,7 +526,20 @@ $t = 7$ without measuring basin sizes or isolating the cause (self-coupling
 removal, cue noise, asynchronous dynamics, finite $N$). The original article
 does quantify retrieval basins, at $N = 1\,000$ and $\alpha = 0.05$ under
 parallel zero-noise dynamics, and finds them stabilised by dreaming; that
-experiment does not cover our higher-load protocol.
+experiment does not cover our higher-load protocol. An interior optimum
+in a dreaming budget is published elsewhere. For Hopfield-Feinstein-Palmer
+unlearning, Marinari, Rossi and Zamponi [@marinari2026clipping] report a
+recognition rate that peaks at a finite number of dreaming steps and then
+returns to zero, the optimal number growing with the load (Fig. 2a,
+p. 5), and an optimum in the balance of learning and dreaming steps that
+is a narrow line without synaptic bounds and a broad region with them
+(Figs. 4 and 5, pp. 6-7). In the multidirectional model of Barra et al.
+[@barra2027dlam] the optimum is interior in the fraction of a fixed total
+dreaming budget given to one layer (Fig. 8, p. 13), while the retrieval
+region of the same article widens with $t$ in its phase diagrams (Fig. 4,
+right, p. 10; Fig. 6, left, p. 12). Neither uses the closed-form kernel
+$J(t)$ with our estimator, and neither bears on the cause of the optimum
+observed here.
 
 The $t^*$ of this article is a dreaming time. It differs from the
 early-stopping time
@@ -562,7 +575,21 @@ What this replication cannot settle: absolute capacities (finite-size,
 estimator-dependent), temperatures other than 0 and 0.2, correlation
 structures other than a single ancestor, and the $m = 0.30$ level, where the
 Hebbian crossings lie inside the first load interval (0.01–0.02) at $T = 0$
-and below the grid on five seeds at $T = 0.2$. A scale sweep (nerve-wml#90) is open and not included here.
+and below the grid on five seeds at $T = 0.2$. Nor does it settle whether
+dreaming removes mixture states as such: the `spurious` label of P4 is a
+residual class (neither retrieved nor another stored pattern), not a test
+of mixtures. Two tests would address this; neither was run. The first
+follows the stability of the symmetric 3-mixtures
+$\operatorname{sign}(\xi^1 + \xi^2 + \xi^3)$ as a function of $t$. The
+second is the spectral acceptance test of Agliari et al.
+[@agliari2025multichannel]: a final state $\bar\sigma$ is accepted only if
+$\bar\sigma^{\mathsf T} J^{K} \bar\sigma / N > 0.8$, where $J^{K}$ is the
+pseudo-inverse coupling matrix, obtained there as the fixed point of an
+iterative unlearning rule started from the Hebbian matrix; the stored
+patterns span the eigenspace of eigenvalue 1 of $J^{K}$, and spurious
+states fall outside it because of the nonlinearity of the sign (p. 3;
+Appendix C, p. 8). The threshold 0.8 is fixed there without
+calibration against a null. A scale sweep (nerve-wml#90) is open and not included here.
 
 # Reproducibility
 
@@ -762,3 +789,6 @@ Claude Code (Anthropic) was used as a tool for the code, the documentation and d
 - [@rougier2017rescience] Rougier N. P., Hinsen K., et al. (2017).
   Sustainable computational science: the ReScience initiative. *PeerJ
   Comput. Sci.* 3, e142. doi:10.7717/peerj-cs.142. arXiv:1707.04393.
+- [@marinari2026clipping] Marinari E., Rossi S., Zamponi F. (2026).
+  Dreaming improves memorization in a Hopfield model with bounded
+  synaptic strength. arXiv:2603.09384.
