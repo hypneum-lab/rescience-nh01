@@ -5,7 +5,7 @@ note: >
   Markdown source of content.tex for the ReScience C template (regenerated
   by md2tex.sh). Every number is read from a file of data/ of this
   repository (copied from hypneum-lab/nerve-wml); the short identifiers
-  D1-D3 and S1-S3 refer to the provenance table of the Appendix.
+  D1-D4 and S1-S4 refer to the provenance table of the Appendix.
 ---
 
 # Introduction
@@ -138,7 +138,12 @@ dynamics is invariant under $c > 0$, so the control must give a ratio of
 exactly 1 (an implementation check, not an empirical hypothesis); at $T > 0$,
 $J_c$ at inverse temperature $\beta$ has the same transition probabilities as
 $J$ at $c\beta$, i.e. the control is the Hebbian network at temperature
-$T/c$. This identity does not impose a deterministic inequality on a
+$T/c$. (The same rescaling of $\beta$ makes the $(1+t)$-normalised kernel
+used here and its unnormalised ridge form statistically equivalent: their
+partition functions coincide up to $\beta \to \beta (P/N)(1+t)/t$, as noted
+by Agliari et al. [@agliari2024regularization] in their footnote 9 and in
+footnote 2, p. 117, of Aquaro's thesis [@aquaro2025thesis]; at $T = 0$ the
+normalisation has no effect.) This identity does not impose a deterministic inequality on a
 finite-time, thresholded, single-realisation capacity estimate (in the pilot,
 seed 6 at $N = 256$, $T = 0.2$ gives a shrink ratio of 1.012), so the effect
 at $T = 0.2$ is measured empirically.
@@ -193,11 +198,99 @@ no single step exceeded 0.05.
    capacities are therefore not comparable with the published curve; the
    replication tests ratios and qualitative claims (gain, spurious removal,
    projector limit).
-2. Self-coupling removed ($J_{ii} = 0$) in all arms: standard for retrieval
-   dynamics; it changes the update fields relative to the original rule,
-   whose field sums over $j = 1 \dots N$. We did not run an ablation with the
-   diagonal kept, so its contribution to the finite optimum in $t$ reported
-   below is not isolated.
+2. Self-coupling removed ($J_{ii} = 0$) in all arms. The field printed
+   in the original article sums over $j = 1 \dots N$ (their Eq. 2.16), and
+   the later work of the original group and its students does not follow
+   a single convention. Some algorithms remove the diagonal before the
+   dynamics: "Remove the diagonal terms from $J$" opens Algorithm 1 of
+   Agliari et al. [@agliari2024hebbian], Algorithm 2 of Agliari et al.
+   [@agliari2024regularization] as numbered in arXiv:2308.01421v2, where
+   the kernel itself is computed with its diagonal (footnotes 4-5) and the
+   diagonal is zeroed only for the dynamics, and Algorithms 4 and 7 of
+   Aquaro's thesis [@aquaro2025thesis]; a master's thesis supervised by
+   Agliari sets $J_{ii} = 0$ and leaves it unchanged by unlearning
+   [@canali2017thesis] (Definition 5.1 and Eq. 6.2, pp. 35 and 52-56); the
+   zero-temperature update of Agliari et al. [@agliari2026exponential]
+   uses overlaps with site $i$ excluded (Algorithm 1); and Barra et al.
+   [@barra2025supralinear] subtract the diagonal contributions from their
+   dense Hamiltonian (Eqs. 42-44). Others keep it: the 2022 preprint by
+   the same six authors as [@agliari2024hebbian] iterates
+   $\sigma \leftarrow \operatorname{sign}(J\sigma)$ with the full kernel
+   [@aquaro2022recurrent] (Eqs. 2.41-2.42); the multidirectional dreaming
+   model of Barra et al. [@barra2027dlam] sums over all $i, j$ (Eq. 4 and
+   Algorithm 1 as numbered in arXiv:2605.13721v1); Alemanno's thesis
+   [@alemanno2021thesis] keeps it in the dreamed kernel (Eq. 2.29, p. 72)
+   while excluding $j = i$ from the field of its reference Hopfield model
+   (p. 45); and Agliari et al. [@agliari2025empty] include self-interactions
+   in their main analysis (Appendix E), set the diagonal to zero only in the
+   training of their Appendix A, and note that in the Hopfield model the
+   diagonal raises the one-step magnetisation from
+   $\operatorname{erf}(1/\sqrt{2\alpha})$ to
+   $\operatorname{erf}((1+\alpha)/\sqrt{2\alpha})$ (footnote 3). Table
+   \ref{tbl:conv} lists fourteen further texts, from the same school and
+   outside it. Two of them compare the two conventions, for the Hebbian
+   kernel only. Folli, Leonetti and Ruocco [@folli2017maximum] keep the
+   diagonal and test whether each stored pattern is a fixed point after
+   one parallel sign update: the diagonal adds $P$ coherent terms to the
+   local field ($N + P - 1$ instead of $N - 1$; Sec. 3.1 and footnote 2,
+   p. 3), and the second region of near-perfect recall that they find at
+   $P \gg N$ disappears when $J_{ii} = 0$ (Fig. 6 and text, p. 6).
+   Vinci, Galluzzi and Mattia [@vinci2025beyond], for deterministic
+   graded units with $J_{ii} = g\alpha$, find an overlap with the
+   pattern used as initial state close to 1 at loads where the same
+   networks with $J_{ii} = 0$ lose recall near $\alpha \approx 0.14$
+   (Fig. 3, p. 5), and critical temperatures of pure and mixture states
+   that are lower when $J_{ii} = 0$ (Fig. 7, p. 9); they mention dreaming
+   only as an alternative that their autapses make unnecessary (p. 10),
+   and the dreaming procedure they call unnecessary there (their ref. [44])
+   is the article replicated here [@fachechi2019dreaming]. Their recall
+   criterion, $|m_1| > 5\sqrt{v/N}$ (p. 6; Figs. 5b and 7; our estimate
+   from their Fig. 4b: about 0.16 to 0.35 at $N = 1\,000$), is not comparable with the overlap $\ge 0.9$
+   after a cue with 10 % of flipped bits used here, so their capacities and
+   ours cannot be compared directly. The rise of the Hebbian baseline in
+   our ablation D4 when the diagonal is kept (0.157 to 0.251, dream/Hebb
+   ratio 3.90 to 1.90; Table \ref{tbl:diag}) is the effect they predict
+   (Figs. 3-4, pp. 5-6). Our inference, not tested: the freezing of the
+   kept-diagonal dynamics near the cue seen in D4 is their self-field
+   "flip-flop" mechanism (pp. 6-7), read with a stricter threshold. Vinci
+   et al. themselves flag an open contradiction: for Kanter and Sompolinsky
+   [@kanter1987projector], autapses keep recall stable beyond $\alpha_c$
+   but its basin shrinks to zero at large $\alpha$ (p. 9). In the other
+   direction, Sumikawa and Kabashima [@sumikawa2026diagonal] conclude, for
+   higher-order Hopfield models, that the enlarged apparent basin is not
+   mainly due to diagonal self-interactions (abstract only, to be checked).
+   None of these texts measures the effect of the convention on a
+   dreamed-to-Hebb capacity ratio. NH-01 follows the first
+   convention, which is also required for detailed balance under
+   sequential updates (Proposition 1.3.1 of [@aquaro2025thesis]).
+   ReScience C asks that replication work "be based exclusively on the
+   originally published paper, although exceptions are admitted if
+   properly documented in the replication article" [@rougier2017rescience]
+   (p. 4). The convention $J_{ii} = 0$ is such an exception, and we
+   declare it as one: it is taken from the 2024-2025 algorithms of the
+   original group cited above, not from the 2019 article, whose field
+   (Eq. 2.16) keeps the diagonal. Its effect is measured by the
+   post-freeze ablation (Table \ref{tbl:diag}): at $t = 10$ the
+   dream/Hebb ratio is 3.90 with the diagonal zeroed in both arms, 1.90
+   with it kept in both arms, and the mixed ratio (kept-diagonal dream
+   over zero-diagonal Hebb) is 3.05. See also
+   Benedetti et al. [@benedetti2024eigenvector] (Sec. III C), for whom
+   correcting the diagonal once at the end rather than at each step of an
+   unlearning procedure changes which eigenvector is dreamed and lets the
+   negative eigenvalue plateau overtake the positive one ("inversion"),
+   and Krotov and Hopfield [@krotov2016dense] (footnote 1), for whom
+   excluding repeated indices from the energy of a dense associative
+   memory changes the prefactor of its capacity. For $\pm1$ spins the diagonal only adds
+   the configuration-independent constant $-\frac12\sum_i J_{ii}$ to the
+   energy; it acts through the zero-temperature update rule and hence
+   through the capacity estimator. After the freeze of this package we
+   pre-registered and ran an ablation keeping the diagonal (Section
+   "Self-coupling convention", Table \ref{tbl:diag}, Figure \ref{fig:diagonal}):
+   the dream/Hebb ratio depends on the convention used in both arms (with
+   the diagonal kept, neither confirmed nor refuted under rule C1, applied
+   as a reading aid), and
+   the contribution of the self-coupling removal to the finite optimum in
+   $t$ is not isolated (registered test C5 inconclusive).
 3. Dynamics and success criterion: asynchronous updates at $T = 0$ instead
    of the parallel sign update of the original zero-noise field and basin
    experiments (their Eq. 2.17); a fixed number of
@@ -210,6 +303,29 @@ no single step exceeded 0.05.
    seeds, thresholds); one voided launch of the pilot (BLAS thread
    oversubscription, killed after ~150 s before the main run; log kept in
    the upstream repository, D1).
+
+Table: Self-coupling conventions in further texts (complement to item 2;
+pages as printed). "Kept": the sum over $i, j$ includes $i = j$ in the
+energy or the field; "zero": $J_{ii} = 0$ is imposed. No text of this
+table measures the effect of the convention on a dreamed-to-Hebb
+capacity ratio. {#tbl:conv}
+
+| Text | Convention | Where |
+|----------|--------------|----------|
+| Albanese et al. 2026 [@albanese2026serial], Hebbian BEG networks | kept, stated as "autapses"; the authors "speculate" that autapses contribute to the absence of a blackout catastrophe, citing [@vinci2025beyond] | Eqs. (2.2), (2.18), pp. 3, 6; Fig. 4 caption, p. 13; Fig. 7 discussion, p. 29 |
+| Albanese, Barra, Cirillo 2025 [@albanese2025guerra], Gaussian couplings | zero, by definition | Definition 1, p. 3 |
+| Agliari, Duarte Mourão, Fachechi, Vivo 2026 [@agliari2026spectral] | zero in the four matrices studied; the replica computation is done with the diagonal, then removed as a shift of the spectrum ($\bar\lambda(t)$ for the dreamed kernel, Lemma 1 and Theorem 1): a result on the limiting spectral density, not on fixed points | Eqs. (3), (5), (7), (8) and note 2, p-2; SM pp. p-13 to p-16 |
+| Agliari, Alessandrelli, Barra, Fachechi 2026 [@agliari2026dense] | kept, repeated indices included | Eqs. (2.2)-(2.4), p. 3 |
+| Agliari, Alessandrelli, Duarte Mourão, Fachechi 2025 [@agliari2025multichannel] | kept in the intra-layer field $J\sigma$, $J = N^{-1}\xi\xi^{\mathsf T}$ | p. 2 |
+| Agliari, Lepre, Roscani 2026 [@agliari2026modular] | kept, prefactor $1/(2N)$ | Eq. (2.2), p. 3 |
+| Agliari et al. 2026 [@agliari2026networks] | kept in the energy and in the field of the dynamics; Appendix H, on the dual of an isolated Hopfield network, writes $i < j$ | Eq. (2.1), p. 2; Eq. (4.3), p. 4; p. 17 |
+| Personnaz, Guyon, Dreyfus 1985 [@personnaz1985information] | projection rule $C = AA^{I}$ with no zeroing of $C_{ii}$ stated; the stability condition $C\sigma^k = \sigma^k$ is written for this full projector | Eq. (6), p. L-362; Eq. (7), p. L-363 |
+| Agliari, Barra, Bianco, Fachechi, Pallara 2026 [@agliari2026infinite] | kept in the Hamiltonian (equilibrium theory) | Eq. (2.1), p. 4 |
+| Benedetti, Ventura, Marinari, Ruocco, Zamponi 2022 [@benedetti2022supervised] | zero: Hebbian $J_{ii} = 0$, reset to 0 after each unlearning step; "autapses" absent | Eq. (3), p. 1; Eq. (9), p. 3; p. 9 |
+| Alemanno 2026 [@alemanno2026attention] | zero in the pairwise model; in the exponential model the self-coupling, "the exponential-model analogue of the diagonal term $J_{ii}$", is kept | Definition 2, p. 3; p. 6; p. 7 |
+| Barra 2008 [@barra2008thesis] | diagonal terms added to a cavity Hamiltonian give a contribution independent of the spins that vanishes after the disorder average (equilibrium, no dynamics) | Eq. (3.134), p. 97 |
+| Folli, Leonetti, Ruocco 2017 [@folli2017maximum] | kept, compared with zero for the Hebbian kernel (one-step stability of stored patterns) | pp. 3, 6 |
+| Vinci, Galluzzi, Mattia 2025 [@vinci2025beyond] | kept ($J_{ii} = g\alpha$), compared with zero for the Hebbian kernel (graded units); recall criterion $\lvert m_1\rvert > 5\sqrt{v/N}$, not comparable with ours; cite the replicated article as made unnecessary by autapses | Fig. 3, p. 5; p. 6; Fig. 7, p. 9; p. 10 |
 
 # Results
 
@@ -320,6 +436,75 @@ matched by key, NaN compared as NaN); `summary.json` identical except its
 `de3ee720…`). The re-runs used 2 worker processes instead of 4 for the
 confirmatory run; the worker count changes only the scheduling.
 
+## Self-coupling convention (post-freeze ablation)
+
+This subsection reports a study run after the submission package was
+frozen on 2026-10-31; every number above is unchanged. A
+fourth L1 pre-registration (S4: hypneum-lab/nerve-wml, tag
+`prereg-nh01-` `diagonal-20261031`, 2026-10-31 16:38:17 UTC; run launched
+58 s later; data D4) compares, at $N = 1\,000$, $T = 0$, on new seeds
+200–209, two arms at every $t$ of the confirmatory grid: `dream_offdiag`,
+an exact replica of the confirmatory dream arm ($J_{ii}(t) = 0$), and
+`dream_diag`, in which the diagonal of $J(t)$ is kept in the update field,
+as in the field printed in the original article. At $t = 0$ each arm is
+the Hebbian kernel in its own convention ($J_{ii} = P/N$ kept in
+`dream_diag`). Cues, dynamics, estimator and bootstrap are those of the
+confirmatory run; 4 800 cells, no non-converged probe, no right-censored
+estimate.
+
+The registered question was the cause of the finite optimum $t^* = 7$,
+through the per-seed drop $D = \hat\alpha_c(7) - \hat\alpha_c(100)$. The
+positive control passed ($D$ = 0.086 [0.082, 0.090] in `dream_offdiag`,
+overlapping the confirmatory 0.088 [0.082, 0.092]). **C5** (primary):
+$D$ = 0.048 [0.043, 0.054] in `dream_diag`, **inconclusive** under the
+registered thresholds ($\le 0.020$ for "cause", $\ge 0.050$ with a lower
+bound above 0.020 for "not the cause"). **C6** (secondary): the paired
+difference of the drops is 0.038 [0.032, 0.043], positive on 10/10 seeds:
+removing the self-coupling contributes to the drop between $t = 7$ and
+$t = 100$, but whether it causes the finite optimum is not decided. With
+the diagonal kept the curve has another shape (Figure \ref{fig:diagonal}):
+it peaks on the grid at $t = 1$ (all ten seeds; the only grid point
+strictly between 0 and 3 is $t = 1$) and then decreases monotonically to 0.441 (median) at
+$t = 100$.
+
+The headline ratio depends on the convention used in both arms
+(Table \ref{tbl:diag}). The ablation did not register C1; its thresholds
+are applied here as a reading aid only.
+
+Table: Dream/Hebb capacity ratio at $T = 0$, $t = 10$, by self-coupling
+convention. Mean over seeds, 95 % seed-level percentile bootstrap (10 000
+resamples, seed 20261025); D2: confirmatory run, D4: ablation. {#tbl:diag}
+
+| Convention (both arms) | Seeds | Hebb $\hat\alpha_c$ | dream $\hat\alpha_c$, $t = 10$ | Ratio | Reading under rule C1 |
+|---------|------|----------|----------|---------|----------|
+| $J_{ii} = 0$ (D2, this article) | 0–9 | 0.157 [0.155, 0.160] | 0.607 [0.604, 0.610] | **3.86 [3.79, 3.93]** | confirmed (registered) |
+| $J_{ii} = 0$ (D4) | 200–209 | 0.157 [0.155, 0.159] | 0.611 [0.607, 0.614] | **3.90 [3.86, 3.94]** | above the C1 threshold (descriptive) |
+| diagonal kept (D4) | 200–209 | 0.251 [0.246, 0.256] | 0.477 [0.475, 0.480] | **1.90 [1.86, 1.95]** | neither confirmed nor refuted under rule C1 |
+
+Note to the table: a mixed ratio, the kept-diagonal dreamed capacity over
+the zero-diagonal Hebbian baseline, is 3.05 [3.00, 3.09]; it corresponds
+to no published protocol and is given for completeness only. Student-$t$
+intervals, as quoted in our comment on the submission issue, are
+[1.85, 1.96] for the kept-diagonal ratio and [2.99, 3.10] for the mixed
+one. For the kept-diagonal convention the lower bound 1.86 is below the
+confirmation threshold 3 and the paired difference, 0.226 [0.220, 0.233],
+is above the refutation bound 0.1.
+
+The diagonal acts in opposite directions on the two arms. In the Hebbian
+baseline the self-coupling $J_{ii} = P/N$ adds an inertia term to every
+field and raises the noisy-cue estimate from 0.157 to 0.251 (at
+$\alpha = 0.20$, 298/320 probes retrieved against 3/320 with $J_{ii} = 0$);
+in the dreamed kernel at $t = 10$ it lowers the estimate from 0.611 to
+0.477. At high load the kept-diagonal arm freezes near the cue: at $t = 7$,
+$\alpha = 0.50$ it retrieves 129/320 probes (318/320 with $J_{ii} = 0$)
+with a mean overlap of 0.90 with the cued pattern, against a retrieval
+threshold of 0.9 and a cue overlap of 0.80, so in that arm
+$\hat\alpha_c$ depends on the threshold more than in the zero-diagonal
+arm. The ablation does not test cue noise, synchronous dynamics, finite
+$N$, $T = 0.2$, correlated patterns or the matched-shrink control.
+
+![Post-freeze self-coupling ablation, $N = 1\,000$, $T = 0$, seeds 200–209 (D4; rendering by `code/scripts/figure_diagonal_ablation.py` from `summary.json`). (a) Empirical capacity versus dreaming time for the zero-diagonal arm (`dream_offdiag`, the protocol of this article, circles) and the kept-diagonal arm (`dream_diag`, squares); the leftmost point of each curve is the Hebbian kernel in the same convention; the dotted vertical line marks the registered $t^* = 7$. (b) Ratio to the Hebbian baseline, each arm over its own $t = 0$ point; grey: mixed ratio of the kept-diagonal dream to the zero-diagonal Hebbian baseline, which corresponds to no published protocol; the dotted line is the C1 threshold 3.0. Error bars: 95 % seed-level percentile bootstrap.](figures/figure-diagonal.png){#fig:diagonal width=100%}
+
 # Conclusion
 
 Under decision rules fixed before each study's main run, this partial
@@ -358,7 +543,37 @@ $t = 7$ without measuring basin sizes or isolating the cause (self-coupling
 removal, cue noise, asynchronous dynamics, finite $N$). The original article
 does quantify retrieval basins, at $N = 1\,000$ and $\alpha = 0.05$ under
 parallel zero-noise dynamics, and finds them stabilised by dreaming; that
-experiment does not cover our higher-load protocol.
+experiment does not cover our higher-load protocol. An interior optimum
+in a dreaming budget is published elsewhere. For Hopfield-Feinstein-Palmer
+unlearning, Marinari, Rossi and Zamponi [@marinari2026clipping] report a
+recognition rate that peaks at a finite number of dreaming steps and then
+returns to zero, the optimal number growing with the load (Fig. 2a,
+p. 5), and an optimum in the balance of learning and dreaming steps that
+is a narrow line without synaptic bounds and a broad region with them
+(Figs. 4 and 5, pp. 6-7). In the multidirectional model of Barra et al.
+[@barra2027dlam] the optimum is interior in the fraction of a fixed total
+dreaming budget given to one layer (Fig. 8, p. 13), while the retrieval
+region of the same article widens with $t$ in its phase diagrams (Fig. 4,
+right, p. 10; Fig. 6, left, p. 12). Neither uses the closed-form kernel
+$J(t)$ with our estimator, and neither bears on the cause of the optimum
+observed here.
+
+The $t^*$ of this article is a dreaming time. It differs from the
+early-stopping time
+$t^*(t_d) \approx (2\bar\lambda)^{-1}\log(1 + t_d\bar\lambda)$, with
+$\bar\lambda$ the mean eigenvalue of the empirical correlation matrix of
+the stored vectors (Eq. 4.50 of Aquaro's thesis [@aquaro2025thesis]),
+which is a training time. In the equivalence established by Agliari et
+al. [@agliari2024regularization] the dreamed kernel with dreaming time
+$t_d$ is the ridge estimator with Tikhonov parameter $\epsilon_J = 1/t_d$,
+and $t^*(t_d)$ is the time at which unregularised gradient descent must
+be stopped to approximate it. Under that identity a finite optimal
+dreaming time reads as a finite optimal regularisation strength; this is
+a reading, not a result of this study. The same group reports that, when
+the stored vectors are noisy examples of archetypes, too long a dreaming
+time leads to overfitting (their Sections 4 and 5); that
+mechanism has no direct counterpart in our protocol, whose stored
+patterns are noise-free and whose noise is in the cue.
 
 Recent work situates these observations. Benedetti et al.
 [@benedetti2024eigenvector] follow the eigenvectors of the coupling matrix
@@ -377,7 +592,21 @@ What this replication cannot settle: absolute capacities (finite-size,
 estimator-dependent), temperatures other than 0 and 0.2, correlation
 structures other than a single ancestor, and the $m = 0.30$ level, where the
 Hebbian crossings lie inside the first load interval (0.01–0.02) at $T = 0$
-and below the grid on five seeds at $T = 0.2$. A scale sweep (nerve-wml#90) is open and not included here.
+and below the grid on five seeds at $T = 0.2$. Nor does it settle whether
+dreaming removes mixture states as such: the `spurious` label of P4 is a
+residual class (neither retrieved nor another stored pattern), not a test
+of mixtures. Two tests would address this; neither was run. The first
+follows the stability of the symmetric 3-mixtures
+$\operatorname{sign}(\xi^1 + \xi^2 + \xi^3)$ as a function of $t$. The
+second is the spectral acceptance test of Agliari et al.
+[@agliari2025multichannel]: a final state $\bar\sigma$ is accepted only if
+$\bar\sigma^{\mathsf T} J^{K} \bar\sigma / N > 0.8$, where $J^{K}$ is the
+pseudo-inverse coupling matrix, obtained there as the fixed point of an
+iterative unlearning rule started from the Hebbian matrix; the stored
+patterns span the eigenspace of eigenvalue 1 of $J^{K}$, and spurious
+states fall outside it because of the nonlinearity of the sign (p. 3;
+Appendix C, p. 8). The threshold 0.8 is fixed there without
+calibration against a null. A scale sweep (nerve-wml#90) is open and not included here.
 
 # Reproducibility
 
@@ -394,6 +623,11 @@ Software Heritage snapshot
 (visit 2026-10-29) holds the three tags as releases; the data are archived
 at Zenodo under DOI 10.5281/\allowbreak{}zenodo.23833431 (nerve-wml v1.10.0, concept DOI
 10.5281/\allowbreak{}zenodo.19656342).
+
+The post-freeze ablation adds its pre-registration (S4) and its data (D4,
+not in that Zenodo version). They were produced by the runner
+`diagonal_ablation.py` of hypneum-lab/nerve-wml at the tag of S4, which
+imports the frozen `run.py` unchanged (identical SHA-256).
 
 Environment: Python 3.12.15, numpy 2.5.4, matplotlib 3.11.2 (full freeze in
 the re-run provenance directory of D2 and D3), single-threaded BLAS
@@ -450,10 +684,12 @@ covered by the internal re-run.
 | D1 | pilot, $N \in \{64, 128, 256\}$, 28 080 cells | `data/nh01/` (`summary.json`, `cells.jsonl.gz`, `run_meta.json`, `figure.png`, `SHA256SUMS`) |
 | D2 | confirmatory, $N = 1\,000$, 9 120 cells, re-run provenance | `data/nh01_confirmatory/` (same files; `provenance-rerun-` `20261030/`) |
 | D3 | correlated, $N = 1\,000$, 29 640 cells, re-run provenance | `data/nh01_correlated/` (same files; `provenance-rerun-` `20261030/`) |
+| D4 | post-freeze self-coupling ablation, $N = 1\,000$, 4 800 cells (nerve-wml commit `d6c42c2`) | `data/nh01_diagonal_` `ablation/` (`summary.json`, `cells.jsonl.gz`, `run_meta.json`, `run.log`, `launch_record.md`, `SHA256SUMS`) |
 | S1 | runners `run.py`, `confirmatory.py`, `correlated.py` at the correlated tag | `code/experiments/` `nh01_hopfield_dream/`; hashes in `code/` `CODE_SHA256_AT_TAG.txt` |
 | S2 | unit tests (20 functions, 23 cases) | `code/tests/` `test_nh01_hopfield_dream.py` |
 | S3 | the three pre-registrations, verbatim copies of the tagged files (tag names in `prereg/README`) | `prereg/` |
-| F | publication rendering of the figures | `code/scripts/` `publication_figures.py` |
+| S4 | post-freeze pre-registration of the self-coupling ablation, verbatim copy at tag `prereg-nh01-` `diagonal-` `20261031` (revision `swh:1:rev:` `6e1b006…`) | `prereg/2026-10-31-` `nh01-diagonal-ablation.md` |
+| F | publication rendering of the figures | `code/scripts/` `publication_figures.py`; `code/scripts/` `figure_diagonal_ablation.py` (D4) |
 
 # AI usage
 
@@ -485,3 +721,94 @@ Claude Code (Anthropic) was used as a tool for the code, the documentation and d
   recall of memory without errors. *Phys. Rev. A* 35, 380.
 - [@tononi2014shy] Tononi G., Cirelli C. (2014). Sleep and the price of
   plasticity. *Neuron* 81, 12–34.
+- [@agliari2024hebbian] Agliari E., Alemanno F., Aquaro M., Barra A.,
+  Durante F., Kanter I. (2024). Hebbian dreaming for small datasets.
+  *Neural Networks* 173, 106174. doi:10.1016/j.neunet.2024.106174.
+- [@agliari2024regularization] Agliari E., Alemanno F., Aquaro M.,
+  Fachechi A. (2024). Regularization, early-stopping and dreaming: a
+  Hopfield-like setup to address generalization and overfitting. *Neural
+  Networks* 177, 106389. doi:10.1016/j.neunet.2024.106389.
+  arXiv:2308.01421.
+- [@aquaro2025thesis] Aquaro M. (2025). Applications of spin glass theory
+  in neural networks and evolutionary models. PhD thesis, Sapienza
+  Università di Roma. hdl:11573/1739810.
+- [@canali2017thesis] Canali A. (2017). Intelligenza artificiale nella
+  fase REM. Master's thesis (supervisor E. Agliari), Sapienza Università
+  di Roma. In Italian.
+- [@alemanno2021thesis] Alemanno F. (2021). Neural networks and learning
+  machines: from mathematical foundation to applications in biological
+  complexity. PhD thesis, Università del Salento.
+- [@aquaro2022recurrent] Aquaro M., Alemanno F., Kanter I., Durante F.,
+  Agliari E., Barra A. (2022). Recurrent neural networks that generalize
+  from examples and optimize by dreaming. arXiv:2204.07954.
+- [@agliari2025empty] Agliari E., Fachechi A., Luongo D. (2025). The
+  importance of being empty: a spectral approach to Hopfield neural
+  networks with diluted examples. arXiv:2503.15353.
+- [@barra2025supralinear] Barra A., Centonze M. S., Marra Solazzo M.,
+  Tantari D. (2025). On the supra-linear storage in dense networks of grid
+  and place cells. arXiv:2511.02441.
+- [@agliari2026exponential] Agliari E., Barra A., Ladiana A., Lepre A.
+  (2026). Exponential capacity in multilayer hetero-associative neural
+  networks. arXiv:2607.29554.
+- [@barra2027dlam] Barra A., Durante F., Ladiana A., Marra Solazzo M.
+  (2027). Do Hopfield networks dream of stored patterns? A
+  statistical-mechanical theory of dreaming in multidirectional
+  associative memories. *Neural Networks* 206, 109729.
+  doi:10.1016/j.neunet.2026.109729. arXiv:2605.13721.
+- [@krotov2016dense] Krotov D., Hopfield J. J. (2016). Dense associative
+  memory for pattern recognition. *Advances in Neural Information
+  Processing Systems* 29, 1172–1180. arXiv:1606.01164.
+- [@albanese2026serial] Albanese L., Alessandrelli A., Barra A., Cirillo
+  E. N. M. (2026). Serial vs parallel recall in the Blume-Every-Griffiths
+  neural networks. arXiv:2601.07777.
+- [@albanese2025guerra] Albanese L., Barra A., Cirillo E. N. M. (2025).
+  Guerra interpolation for inverse freezing. *J. Math. Phys.* 66, 123305.
+  doi:10.1063/5.0280543. arXiv:2505.06202.
+- [@agliari2026spectral] Agliari E., Duarte Mourão P., Fachechi A., Vivo
+  P. (2026). Spectral criteria for generalization in unsupervised Hebbian
+  nets. arXiv:2606.04651.
+- [@agliari2026dense] Agliari E., Alessandrelli A., Barra A., Fachechi A.
+  (2026). Dense auto-hetero associative memories applied to noisy
+  communication channels. arXiv:2609.32605.
+- [@agliari2025multichannel] Agliari E., Alessandrelli A., Duarte Mourão
+  P., Fachechi A. (2025). Multi-channel pattern reconstruction through
+  L-directional associative memories. arXiv:2503.06274.
+- [@agliari2026modular] Agliari E., Lepre A., Roscani E. (2026).
+  Classifications in modular restricted Boltzmann machines.
+  arXiv:2610.08612.
+- [@agliari2026networks] Agliari E., Alessandrelli A., Barra A., Centonze
+  M., Ricci-Tersenghi F. (2026). Networks of Hebbian networks: more is
+  different. *Neural Networks* 194, 108181.
+  doi:10.1016/j.neunet.2025.108181. arXiv:2501.16789.
+- [@personnaz1985information] Personnaz L., Guyon I., Dreyfus G. (1985).
+  Information storage and retrieval in spin-glass like neural networks.
+  *J. Physique Lettres* 46, L359–L365.
+  doi:10.1051/jphyslet:01985004608035900.
+- [@agliari2026infinite] Agliari E., Barra A., Bianco P., Fachechi A.,
+  Pallara D. (2026). The infinite volume limit of the Hopfield neural
+  networks in the replica-symmetric regime. *Ann. Henri Poincaré*.
+  doi:10.1007/s00023-026-01770-4. arXiv:2409.10145.
+- [@benedetti2022supervised] Benedetti M., Ventura E., Marinari E.,
+  Ruocco G., Zamponi F. (2022). Supervised perceptron learning vs
+  unsupervised Hebbian unlearning. *J. Chem. Phys.* 156, 104107.
+  doi:10.1063/5.0084219. arXiv:2201.00032.
+- [@alemanno2026attention] Alemanno F. (2026). Attention over noisy
+  examples: generalization and memorization in the exponential Hopfield
+  network. arXiv:2610.22191.
+- [@barra2008thesis] Barra A. (2008). Mean field spin glasses: exact
+  results without the replica trick. PhD thesis.
+- [@folli2017maximum] Folli V., Leonetti M., Ruocco G. (2017). On the
+  maximum storage capacity of the Hopfield model. *Front. Comput.
+  Neurosci.* 10, 144. doi:10.3389/fncom.2016.00144.
+- [@vinci2025beyond] Vinci G. V., Galluzzi A., Mattia M. (2025). Beyond
+  catastrophic forgetting in associative networks with self-interactions.
+  arXiv:2504.04560.
+- [@sumikawa2026diagonal] Sumikawa Y., Kabashima Y. (2026). Testing the
+  role of diagonal interactions in high-order Hopfield models via
+  dynamical mean-field theory. arXiv:2604.03115.
+- [@rougier2017rescience] Rougier N. P., Hinsen K., et al. (2017).
+  Sustainable computational science: the ReScience initiative. *PeerJ
+  Comput. Sci.* 3, e142. doi:10.7717/peerj-cs.142. arXiv:1707.04393.
+- [@marinari2026clipping] Marinari E., Rossi S., Zamponi F. (2026).
+  Dreaming improves memorization in a Hopfield model with bounded
+  synaptic strength. arXiv:2603.09384.

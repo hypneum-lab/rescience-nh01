@@ -10,6 +10,9 @@ $N = 1\,000$ studies.
 Author: Clément Saillant (Hypneum Lab, ORCID
 [0000-0002-8414-185X](https://orcid.org/0000-0002-8414-185X)).
 Status: **submission package frozen on 2026-10-31** (tag `submission-20261031`); the ReScience C submission issue will be linked here once opened.
+Version 2 (branch `v2-diagonal`, draft): adds the post-freeze, pre-registered
+self-coupling ablation (convention table, Figure 3, three references); every
+number of the frozen package is unchanged.
 
 Headline: dreaming at $t = 10$ multiplies the empirical capacity by
 3.86 [3.79, 3.93] at $N = 1\,000$ (confirmed), 9.06 [8.84, 9.29] on correlated
@@ -35,9 +38,10 @@ rescience-nh01/
 │   ├── metadata.yaml          ReScience metadata (template fields)
 │   ├── article.md             Markdown source of the article (edit this)
 │   ├── content.tex            generated: pandoc -f markdown --biblatex article.md, \autocite → \supercite
-│   ├── bibliography.bib       8 entries
+│   ├── bibliography.bib       11 entries (8 at the freeze, 3 added in v2)
 │   ├── figures/               figure-pilot.png (= data/nh01/figure.png); figure-{confirmatory,correlated}.png
-│   │                          rendered by code/scripts/publication_figures.py from data/*/cells.jsonl.gz
+│   │                          rendered by code/scripts/publication_figures.py from data/*/cells.jsonl.gz;
+│   │                          v2: figure-diagonal.png by code/scripts/figure_diagonal_ablation.py
 │   ├── article.tex            template + longtable/booktabs/amssymb and the pandoc helpers (3 lines)
 │   └── header.tex, rescience.cls, article.py, yaml-to-latex.py, Makefile, COPYING, fonts/
 │                              from github.com/ReScience/template (0978d0e); Makefile adds the article.md → content.tex rule
@@ -45,7 +49,8 @@ rescience-nh01/
 │   ├── experiments/nh01_hopfield_dream/   run.py, confirmatory.py, correlated.py (verbatim, tag prereg-nh01-correlated-20261027)
 │   ├── tests/                 3 files, 20 test functions (23 cases)
 │   ├── scripts/               compare_nh01.py (cell-by-cell check), rerun_nh01.sh (provenance wrapper),
-│   │                          publication_figures.py (article figures, pinned numpy/matplotlib)
+│   │                          publication_figures.py (article figures, pinned numpy/matplotlib),
+│   │                          figure_diagonal_ablation.py (v2, Figure 3 from data/nh01_diagonal_ablation/summary.json)
 │   ├── requirements.txt       numpy==2.5.4 matplotlib==3.11.2 pytest==9.1.1
 │   ├── run.sh                 reproduces the confirmatory and correlated grids (exact seeds/parameters)
 │   ├── CODE_SHA256_AT_TAG.txt
@@ -54,8 +59,10 @@ rescience-nh01/
 │   │                          three runs + provenance-rerun-20261030/ ; MANIFEST.sha256 ; README.md
 │   ├── nh01/                  pilot, N ∈ {64, 128, 256}, 28 080 cells
 │   ├── nh01_confirmatory/     N = 1 000, independent patterns, 9 120 cells
-│   └── nh01_correlated/       N = 1 000, m ∈ {0, 0.15, 0.30}, 29 640 cells
-├── prereg/                    the three frozen pre-registration files (verbatim) + README.md
+│   ├── nh01_correlated/       N = 1 000, m ∈ {0, 0.15, 0.30}, 29 640 cells
+│   └── nh01_diagonal_ablation/  v2, post-freeze: self-coupling kept vs removed, N = 1 000, 4 800 cells
+├── prereg/                    the three frozen pre-registration files (verbatim) + README.md;
+│                              v2: the post-freeze diagonal-ablation registration (verbatim)
 └── review/                    two independent automated review passes (2026-10-31): briefs, reports,
                                verdict table, article as it stood before the review + README.md
 ```
