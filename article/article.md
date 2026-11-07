@@ -244,8 +244,8 @@ no single step exceeded 0.05.
    only as an alternative that their autapses make unnecessary (p. 10),
    and the dreaming procedure they call unnecessary there (their ref. [44])
    is the article replicated here [@fachechi2019dreaming]. Their recall
-   criterion, $|m_1| > 5\sqrt{v/N}$ (p. 6; Figs. 5b and 7), about 0.16 to
-   0.35 at $N = 1\,000$, is not comparable with the overlap $\ge 0.9$
+   criterion, $|m_1| > 5\sqrt{v/N}$ (p. 6; Figs. 5b and 7; our estimate
+   from their Fig. 4b: about 0.16 to 0.35 at $N = 1\,000$), is not comparable with the overlap $\ge 0.9$
    after a cue with 10 % of flipped bits used here, so their capacities and
    ours cannot be compared directly. The rise of the Hebbian baseline in
    our ablation D4 when the diagonal is kept (0.157 to 0.251, dream/Hebb
