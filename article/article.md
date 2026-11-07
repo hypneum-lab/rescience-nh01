@@ -241,7 +241,24 @@ no single step exceeded 0.05.
    networks with $J_{ii} = 0$ lose recall near $\alpha \approx 0.14$
    (Fig. 3, p. 5), and critical temperatures of pure and mixture states
    that are lower when $J_{ii} = 0$ (Fig. 7, p. 9); they mention dreaming
-   only as an alternative that their autapses make unnecessary (p. 10).
+   only as an alternative that their autapses make unnecessary (p. 10),
+   and the dreaming procedure they call unnecessary there (their ref. [44])
+   is the article replicated here [@fachechi2019dreaming]. Their recall
+   criterion, $|m_1| > 5\sqrt{v/N}$ (p. 6; Figs. 5b and 7), about 0.16 to
+   0.35 at $N = 1\,000$, is not comparable with the overlap $\ge 0.9$
+   after a cue with 10 % of flipped bits used here, so their capacities and
+   ours cannot be compared directly. The rise of the Hebbian baseline in
+   our ablation D4 when the diagonal is kept (0.157 to 0.251, dream/Hebb
+   ratio 3.90 to 1.90; Table \ref{tbl:diag}) is the effect they predict
+   (Figs. 3-4, pp. 5-6). Our inference, not tested: the freezing of the
+   kept-diagonal dynamics near the cue seen in D4 is their self-field
+   "flip-flop" mechanism (pp. 6-7), read with a stricter threshold. Vinci
+   et al. themselves flag an open contradiction: for Kanter and Sompolinsky
+   [@kanter1987projector], autapses keep recall stable beyond $\alpha_c$
+   but its basin shrinks to zero at large $\alpha$ (p. 9). In the other
+   direction, Sumikawa and Kabashima [@sumikawa2026diagonal] conclude, for
+   higher-order Hopfield models, that the enlarged apparent basin is not
+   mainly due to diagonal self-interactions (abstract only, to be checked).
    None of these texts measures the effect of the convention on a
    dreamed-to-Hebb capacity ratio. NH-01 follows the first
    convention, which is also required for detailed balance under
@@ -308,7 +325,7 @@ capacity ratio. {#tbl:conv}
 | Alemanno 2026 [@alemanno2026attention] | zero in the pairwise model; in the exponential model the self-coupling, "the exponential-model analogue of the diagonal term $J_{ii}$", is kept | Definition 2, p. 3; p. 6; p. 7 |
 | Barra 2008 [@barra2008thesis] | diagonal terms added to a cavity Hamiltonian give a contribution independent of the spins that vanishes after the disorder average (equilibrium, no dynamics) | Eq. (3.134), p. 97 |
 | Folli, Leonetti, Ruocco 2017 [@folli2017maximum] | kept, compared with zero for the Hebbian kernel (one-step stability of stored patterns) | pp. 3, 6 |
-| Vinci, Galluzzi, Mattia 2025 [@vinci2025beyond] | kept ($J_{ii} = g\alpha$), compared with zero for the Hebbian kernel (graded units) | Fig. 3, p. 5; Fig. 7, p. 9 |
+| Vinci, Galluzzi, Mattia 2025 [@vinci2025beyond] | kept ($J_{ii} = g\alpha$), compared with zero for the Hebbian kernel (graded units); recall criterion $\lvert m_1\rvert > 5\sqrt{v/N}$, not comparable with ours; cite the replicated article as made unnecessary by autapses | Fig. 3, p. 5; p. 6; Fig. 7, p. 9; p. 10 |
 
 # Results
 
@@ -786,6 +803,9 @@ Claude Code (Anthropic) was used as a tool for the code, the documentation and d
 - [@vinci2025beyond] Vinci G. V., Galluzzi A., Mattia M. (2025). Beyond
   catastrophic forgetting in associative networks with self-interactions.
   arXiv:2504.04560.
+- [@sumikawa2026diagonal] Sumikawa Y., Kabashima Y. (2026). Testing the
+  role of diagonal interactions in high-order Hopfield models via
+  dynamical mean-field theory. arXiv:2604.03115.
 - [@rougier2017rescience] Rougier N. P., Hinsen K., et al. (2017).
   Sustainable computational science: the ReScience initiative. *PeerJ
   Comput. Sci.* 3, e142. doi:10.7717/peerj-cs.142. arXiv:1707.04393.
