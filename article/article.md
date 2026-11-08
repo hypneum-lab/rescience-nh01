@@ -141,8 +141,8 @@ $J$ at $c\beta$, i.e. the control is the Hebbian network at temperature
 $T/c$. (The same rescaling of $\beta$ makes the $(1+t)$-normalised kernel
 used here and its unnormalised ridge form statistically equivalent: their
 partition functions coincide up to $\beta \to \beta (P/N)(1+t)/t$, as noted
-by Agliari et al. [@agliari2024regularization] in their footnote 9 and in
-footnote 2, p. 117, of Aquaro's thesis [@aquaro2025thesis]; at $T = 0$ the
+by Agliari et al. [@agliari2024regularization] in their footnote 9 (also
+footnote 2, p. 117 [PDF 121], of Aquaro's thesis [@aquaro2025thesis]); at $T = 0$ the
 normalisation has no effect.) This identity does not impose a deterministic inequality on a
 finite-time, thresholded, single-realisation capacity estimate (in the pilot,
 seed 6 at $N = 256$, $T = 0.2$ gives a shrink ratio of 1.012), so the effect
@@ -206,8 +206,14 @@ no single step exceeded 0.05.
    Agliari et al. [@agliari2024hebbian], Algorithm 2 of Agliari et al.
    [@agliari2024regularization] as numbered in arXiv:2308.01421v2, where
    the kernel itself is computed with its diagonal (footnotes 4-5) and the
-   diagonal is zeroed only for the dynamics, and Algorithms 4 and 7 of
-   Aquaro's thesis [@aquaro2025thesis]; a master's thesis supervised by
+   diagonal is zeroed only for the dynamics; Aquaro's thesis
+   [@aquaro2025thesis] is a secondary source here: its Algorithm 7 (p. 120
+   [PDF 124]) is identical to Algorithm 2 above, and its Algorithm 4
+   (p. 104 [PDF 108]) is the only one of the three without a published
+   counterpart. In both, the thesis removes the diagonal only in the
+   dynamics: the kernel keeps it (Eqs. 2.117 and 2.200) and the loss
+   allows $j = i$ (note 1, Sec. 2.3). Thesis page numbers are printed
+   pages, with the PDF page in brackets where recorded. A master's thesis supervised by
    Agliari sets $J_{ii} = 0$ and leaves it unchanged by unlearning
    [@canali2017thesis] (winter session, academic year 2016-2017; Definition
    5.1 and Eq. 6.2, pp. 35 and 52-56); the
@@ -222,9 +228,9 @@ no single step exceeded 0.05.
    [@aquaro2022recurrent] (Eqs. 2.41-2.42); the multidirectional dreaming
    model of Barra et al. [@barra2027dlam] sums over all $i, j$ (Eq. 4 and
    Algorithm 1 as numbered in arXiv:2605.13721v1); Alemanno's thesis
-   [@alemanno2021thesis] keeps it in the dreamed kernel (Eq. 2.29, PDF
-   p. 77, printed p. 72) while excluding $j = i$ from the field of its
-   reference Hopfield model (PDF p. 45); and Agliari et al. [@agliari2025empty] include self-interactions
+   [@alemanno2021thesis] keeps it in the dreamed kernel (Eq. 2.29, p. 72 [PDF 77])
+   while excluding $j = i$ from the field of its reference Hopfield model
+   (PDF p. 45); and Agliari et al. [@agliari2025empty] include self-interactions
    in their main analysis (Appendix E), set the diagonal to zero only in the
    training of their Appendix A, and note that in the Hopfield model the
    diagonal raises the one-step magnetisation from
@@ -268,7 +274,11 @@ no single step exceeded 0.05.
    None of these texts measures the effect of the convention on a
    dreamed-to-Hebb capacity ratio. NH-01 follows the first
    convention, which is also required for detailed balance under
-   sequential updates (Proposition 1.3.1 of [@aquaro2025thesis]).
+   sequential updates (see Coolen, Kühn and Sollich [@coolen2005theory],
+   and Proposition 1.3.1 of [@aquaro2025thesis], p. 11 [PDF 15], which
+   restates it); this matters only for the $T = 0.2$ arm, since at
+   $T = 0$ the dynamics is deterministic and no stationary distribution
+   is invoked.
    ReScience C asks that replication work "be based exclusively on the
    originally published paper, although exceptions are admitted if
    properly documented in the replication article" [@rougier2017rescience]
@@ -570,7 +580,9 @@ The $t^*$ of this article is a dreaming time. It differs from the
 early-stopping time
 $t^*(t_d) \approx (2\bar\lambda)^{-1}\log(1 + t_d\bar\lambda)$, with
 $\bar\lambda$ the mean eigenvalue of the empirical correlation matrix of
-the stored vectors (Eq. 4.50 of Aquaro's thesis [@aquaro2025thesis]),
+the centred, $1/P$-normalised stored vectors (Eq. 33 of Agliari et al. [@agliari2024regularization], Appendix C, a
+rough estimate restated as Eq. 4.50 of Aquaro's thesis
+[@aquaro2025thesis], Appendix E, p. 154 [PDF 158]),
 which is a training time. In the equivalence established by Agliari et
 al. [@agliari2024regularization] the dreamed kernel with dreaming time
 $t_d$ is the ridge estimator with Tikhonov parameter $\epsilon_J = 1/t_d$,
@@ -739,7 +751,13 @@ Claude Code (Anthropic) was used as a tool for the code, the documentation and d
   arXiv:2308.01421.
 - [@aquaro2025thesis] Aquaro M. (2025). Applications of spin glass theory
   in neural networks and evolutionary models. PhD thesis, Sapienza
-  Università di Roma. hdl:11573/1739810.
+  Università di Roma (defended 2025-02-21). hdl:11573/1739810,
+  https://iris.uniroma1.it/handle/11573/1739810. Page numbers from the
+  author's PDF dated 2024-10-28 (167 pp.), which may differ from the
+  deposited version; printed pages, PDF page = printed + 4.
+- [@coolen2005theory] Coolen A. C. C., Kühn R., Sollich P. (2005). *Theory
+  of neural information processing systems*. Oxford University Press.
+  doi:10.1093/oso/9780198530237.001.0001.
 - [@canali2017thesis] Canali A. (2017, winter session, AY 2016-2017). Intelligenza artificiale nella
   fase REM. Master's thesis (supervisor E. Agliari), Sapienza Università
   di Roma. In Italian.
