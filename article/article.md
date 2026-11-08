@@ -209,19 +209,22 @@ no single step exceeded 0.05.
    diagonal is zeroed only for the dynamics, and Algorithms 4 and 7 of
    Aquaro's thesis [@aquaro2025thesis]; a master's thesis supervised by
    Agliari sets $J_{ii} = 0$ and leaves it unchanged by unlearning
-   [@canali2017thesis] (Definition 5.1 and Eq. 6.2, pp. 35 and 52-56); the
+   [@canali2017thesis] (winter session, academic year 2016-2017; Definition
+   5.1 and Eq. 6.2, pp. 35 and 52-56); the
    zero-temperature update of Agliari et al. [@agliari2026exponential]
-   uses overlaps with site $i$ excluded (Algorithm 1); and Barra et al.
-   [@barra2025supralinear] subtract the diagonal contributions from their
-   dense Hamiltonian (Eqs. 42-44). Others keep it: the 2022 preprint by
+   uses overlaps with site $i$ excluded (Algorithm 1). Barra et al.
+   [@barra2025supralinear] (Eqs. 42-44) handle repeated-index tuples that
+   are double-counted in the perfect square of their dense Hamiltonian; this
+   concerns the combinatorics of the dense energy, not the $J_{ii}$
+   convention. Others keep it: the 2022 preprint by
    the same six authors as [@agliari2024hebbian] iterates
    $\sigma \leftarrow \operatorname{sign}(J\sigma)$ with the full kernel
    [@aquaro2022recurrent] (Eqs. 2.41-2.42); the multidirectional dreaming
    model of Barra et al. [@barra2027dlam] sums over all $i, j$ (Eq. 4 and
    Algorithm 1 as numbered in arXiv:2605.13721v1); Alemanno's thesis
-   [@alemanno2021thesis] keeps it in the dreamed kernel (Eq. 2.29, p. 72)
-   while excluding $j = i$ from the field of its reference Hopfield model
-   (p. 45); and Agliari et al. [@agliari2025empty] include self-interactions
+   [@alemanno2021thesis] keeps it in the dreamed kernel (Eq. 2.29, PDF
+   p. 77, printed p. 72) while excluding $j = i$ from the field of its
+   reference Hopfield model (PDF p. 45); and Agliari et al. [@agliari2025empty] include self-interactions
    in their main analysis (Appendix E), set the diagonal to zero only in the
    training of their Appendix A, and note that in the Hopfield model the
    diagonal raises the one-step magnetisation from
@@ -244,8 +247,10 @@ no single step exceeded 0.05.
    only as an alternative that their autapses make unnecessary (p. 10),
    and the dreaming procedure they call unnecessary there (their ref. [44])
    is the article replicated here [@fachechi2019dreaming]. Their recall
-   criterion, $|m_1| > 5\sqrt{v/N}$ (p. 6; Figs. 5b and 7; our estimate
-   from their Fig. 4b: about 0.16 to 0.35 at $N = 1\,000$), is not comparable with the overlap $\ge 0.9$
+   criterion, $|m_1| > 5\sqrt{v/N}$ (p. 6; Figs. 5b and 7). Our estimate from their Fig. 4b, with the
+   formula $5\sqrt{v/N}$ at $N = 1\,000$, is 0.158 for $v = 1$ and 0.354 for
+   $v \approx 5$, that is about 0.16 to 0.35; Vinci et al. themselves
+   simulate $N = 500$. This criterion is not comparable with the overlap $\ge 0.9$
    after a cue with 10 % of flipped bits used here, so their capacities and
    ours cannot be compared directly. The rise of the Hebbian baseline in
    our ablation D4 when the diagonal is kept (0.157 to 0.251, dream/Hebb
@@ -256,9 +261,10 @@ no single step exceeded 0.05.
    et al. themselves flag an open contradiction: for Kanter and Sompolinsky
    [@kanter1987projector], autapses keep recall stable beyond $\alpha_c$
    but its basin shrinks to zero at large $\alpha$ (p. 9). In the other
-   direction, Sumikawa and Kabashima [@sumikawa2026diagonal] conclude, for
-   higher-order Hopfield models, that the enlarged apparent basin is not
-   mainly due to diagonal self-interactions (abstract only, to be checked).
+   direction, Sumikawa and Kabashima [@sumikawa2026diagonal] state, for
+   higher-order Hopfield models, that the slowdown "cannot be attributed
+   primarily to diagonal self-interaction effects" (abstract only, to be
+   checked).
    None of these texts measures the effect of the convention on a
    dreamed-to-Hebb capacity ratio. NH-01 follows the first
    convention, which is also required for detailed balance under
@@ -320,9 +326,9 @@ capacity ratio. {#tbl:conv}
 | Agliari, Lepre, Roscani 2026 [@agliari2026modular] | kept, prefactor $1/(2N)$ | Eq. (2.2), p. 3 |
 | Agliari et al. 2026 [@agliari2026networks] | kept in the energy and in the field of the dynamics; Appendix H, on the dual of an isolated Hopfield network, writes $i < j$ | Eq. (2.1), p. 2; Eq. (4.3), p. 4; p. 17 |
 | Personnaz, Guyon, Dreyfus 1985 [@personnaz1985information] | projection rule $C = AA^{I}$ with no zeroing of $C_{ii}$ stated; the stability condition $C\sigma^k = \sigma^k$ is written for this full projector | Eq. (6), p. L-362; Eq. (7), p. L-363 |
-| Agliari, Barra, Bianco, Fachechi, Pallara 2026 [@agliari2026infinite] | kept in the Hamiltonian (equilibrium theory) | Eq. (2.1), p. 4 |
+| Agliari, Barra, Bianco, Fachechi, Pallara 2026 [@agliari2026infinite] | kept in the Hamiltonian (equilibrium theory) | Eq. (2.1), PDF p. 5 (printed p. 4) |
 | Benedetti, Ventura, Marinari, Ruocco, Zamponi 2022 [@benedetti2022supervised] | zero: Hebbian $J_{ii} = 0$, reset to 0 after each unlearning step; "autapses" absent | Eq. (3), p. 1; Eq. (9), p. 3; p. 9 |
-| Alemanno 2026 [@alemanno2026attention] | zero in the pairwise model; in the exponential model the self-coupling, "the exponential-model analogue of the diagonal term $J_{ii}$", is kept | Definition 2, p. 3; p. 6; p. 7 |
+| Alemanno 2026 [@alemanno2026attention] | zero in the pairwise model; in the exponential model the self-coupling, "the exponential-model analogue of the diagonal term $J_{ii}$", is kept | Definition 3, p. 3; p. 6; p. 7 |
 | Barra 2008 [@barra2008thesis] | diagonal terms added to a cavity Hamiltonian give a contribution independent of the spins that vanishes after the disorder average (equilibrium, no dynamics) | Eq. (3.134), p. 97 |
 | Folli, Leonetti, Ruocco 2017 [@folli2017maximum] | kept, compared with zero for the Hebbian kernel (one-step stability of stored patterns) | pp. 3, 6 |
 | Vinci, Galluzzi, Mattia 2025 [@vinci2025beyond] | kept ($J_{ii} = g\alpha$), compared with zero for the Hebbian kernel (graded units); recall criterion $\lvert m_1\rvert > 5\sqrt{v/N}$, not comparable with ours; cite the replicated article as made unnecessary by autapses | Fig. 3, p. 5; p. 6; Fig. 7, p. 9; p. 10 |
@@ -481,7 +487,9 @@ resamples, seed 20261025); D2: confirmatory run, D4: ablation. {#tbl:diag}
 | $J_{ii} = 0$ (D4) | 200–209 | 0.157 [0.155, 0.159] | 0.611 [0.607, 0.614] | **3.90 [3.86, 3.94]** | above the C1 threshold (descriptive) |
 | diagonal kept (D4) | 200–209 | 0.251 [0.246, 0.256] | 0.477 [0.475, 0.480] | **1.90 [1.86, 1.95]** | neither confirmed nor refuted under rule C1 |
 
-Note to the table: a mixed ratio, the kept-diagonal dreamed capacity over
+Note to the table: the Hebb value 0.251 for the kept diagonal is the mean
+over seeds; the median is 0.250, and it is the median that the data file
+carries. A mixed ratio, the kept-diagonal dreamed capacity over
 the zero-diagonal Hebbian baseline, is 3.05 [3.00, 3.09]; it corresponds
 to no published protocol and is given for completeness only. Student-$t$
 intervals, as quoted in our comment on the submission issue, are
@@ -732,7 +740,7 @@ Claude Code (Anthropic) was used as a tool for the code, the documentation and d
 - [@aquaro2025thesis] Aquaro M. (2025). Applications of spin glass theory
   in neural networks and evolutionary models. PhD thesis, Sapienza
   Università di Roma. hdl:11573/1739810.
-- [@canali2017thesis] Canali A. (2017). Intelligenza artificiale nella
+- [@canali2017thesis] Canali A. (2017, winter session, AY 2016-2017). Intelligenza artificiale nella
   fase REM. Master's thesis (supervisor E. Agliari), Sapienza Università
   di Roma. In Italian.
 - [@alemanno2021thesis] Alemanno F. (2021). Neural networks and learning

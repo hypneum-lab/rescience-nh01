@@ -233,27 +233,28 @@ why}\label{what-was-changed-with-respect-to-the-original-and-why}
   dynamics, and Algorithms 4 and 7 of Aquaro's thesis
   \supercite{aquaro2025thesis}; a master's thesis supervised by Agliari
   sets \(J_{ii} = 0\) and leaves it unchanged by unlearning
-  \supercite{canali2017thesis} (Definition 5.1 and Eq. 6.2, pp.~35 and
-  52-56); the zero-temperature update of Agliari et al.
-  \supercite{agliari2026exponential} uses overlaps with site \(i\)
-  excluded (Algorithm 1); and Barra et al.
-  \supercite{barra2025supralinear} subtract the diagonal contributions
-  from their dense Hamiltonian (Eqs. 42-44). Others keep it: the 2022
-  preprint by the same six authors as \supercite{agliari2024hebbian}
-  iterates \(\sigma \leftarrow \operatorname{sign}(J\sigma)\) with the
-  full kernel \supercite{aquaro2022recurrent} (Eqs. 2.41-2.42); the
+  \supercite{canali2017thesis} (winter session, academic year 2016-2017;
+  Definition 5.1 and Eq. 6.2, pp.~35 and 52-56); the zero-temperature
+  update of Agliari et al. \supercite{agliari2026exponential} uses
+  overlaps with site \(i\) excluded (Algorithm 1). Barra et al.
+  \supercite{barra2025supralinear} (Eqs. 42-44) handle repeated-index
+  tuples that are double-counted in the perfect square of their dense
+  Hamiltonian; this concerns the combinatorics of the dense energy, not
+  the \(J_{ii}\) convention. Others keep it: the 2022 preprint by the
+  same six authors as \supercite{agliari2024hebbian} iterates
+  \(\sigma \leftarrow \operatorname{sign}(J\sigma)\) with the full
+  kernel \supercite{aquaro2022recurrent} (Eqs. 2.41-2.42); the
   multidirectional dreaming model of Barra et al.
   \supercite{barra2027dlam} sums over all \(i, j\) (Eq. 4 and Algorithm 1
   as numbered in arXiv:2605.13721v1); Alemanno's thesis
   \supercite{alemanno2021thesis} keeps it in the dreamed kernel (Eq.
-  2.29, p.~72) while excluding \(j = i\) from the field of its reference
-  Hopfield model
-
-  (p.~45); and Agliari et al. \supercite{agliari2025empty} include
-  self-interactions in their main analysis (Appendix E), set the
-  diagonal to zero only in the training of their Appendix A, and note
-  that in the Hopfield model the diagonal raises the one-step
-  magnetisation from \(\operatorname{erf}(1/\sqrt{2\alpha})\) to
+  2.29, PDF p.~77, printed p.~72) while excluding \(j = i\) from the
+  field of its reference Hopfield model (PDF p.~45); and Agliari et al.
+  \supercite{agliari2025empty} include self-interactions in their main
+  analysis (Appendix E), set the diagonal to zero only in the training
+  of their Appendix A, and note that in the Hopfield model the diagonal
+  raises the one-step magnetisation from
+  \(\operatorname{erf}(1/\sqrt{2\alpha})\) to
   \(\operatorname{erf}((1+\alpha)/\sqrt{2\alpha})\) (footnote 3). Table
   \ref{tbl:conv} lists fourteen further texts, from the same school and
   outside it. Two of them compare the two conventions, for the Hebbian
@@ -270,7 +271,29 @@ why}\label{what-was-changed-with-respect-to-the-original-and-why}
   lose recall near \(\alpha \approx 0.14\) (Fig. 3, p.~5), and critical
   temperatures of pure and mixture states that are lower when
   \(J_{ii} = 0\) (Fig. 7, p.~9); they mention dreaming only as an
-  alternative that their autapses make unnecessary (p.~10). None of
+  alternative that their autapses make unnecessary (p.~10), and the
+  dreaming procedure they call unnecessary there (their ref. {[}44{]})
+  is the article replicated here \supercite{fachechi2019dreaming}. Their
+  recall criterion, \(|m_1| > 5\sqrt{v/N}\) (p.~6; Figs. 5b and 7). Our
+  estimate from their Fig. 4b, with the formula \(5\sqrt{v/N}\) at
+  \(N = 1\,000\), is 0.158 for \(v = 1\) and 0.354 for \(v \approx 5\),
+  that is about 0.16 to 0.35; Vinci et al.~themselves simulate
+  \(N = 500\). This criterion is not comparable with the overlap
+  \(\ge 0.9\) after a cue with 10 \% of flipped bits used here, so their
+  capacities and ours cannot be compared directly. The rise of the
+  Hebbian baseline in our ablation D4 when the diagonal is kept (0.157
+  to 0.251, dream/Hebb ratio 3.90 to 1.90; Table \ref{tbl:diag}) is the
+  effect they predict (Figs. 3-4, pp.~5-6). Our inference, not tested:
+  the freezing of the kept-diagonal dynamics near the cue seen in D4 is
+  their self-field ``flip-flop'' mechanism (pp.~6-7), read with a
+  stricter threshold. Vinci et al.~themselves flag an open
+  contradiction: for Kanter and Sompolinsky
+  \supercite{kanter1987projector}, autapses keep recall stable beyond
+  \(\alpha_c\) but its basin shrinks to zero at large \(\alpha\) (p.~9).
+  In the other direction, Sumikawa and Kabashima
+  \supercite{sumikawa2026diagonal} state, for higher-order Hopfield
+  models, that the slowdown ``cannot be attributed primarily to diagonal
+  self-interaction effects'' (abstract only, to be checked). None of
   these texts measures the effect of the convention on a dreamed-to-Hebb
   capacity ratio. NH-01 follows the first convention, which is also
   required for detailed balance under sequential updates (Proposition
@@ -383,7 +406,7 @@ stability condition \(C\sigma^k = \sigma^k\) is written for this full
 projector & Eq. (6), p.~L-362; Eq. (7), p.~L-363 \\
 Agliari, Barra, Bianco, Fachechi, Pallara 2026
 \supercite{agliari2026infinite} & kept in the Hamiltonian (equilibrium
-theory) & Eq. (2.1), p.~4 \\
+theory) & Eq. (2.1), PDF p.~5 (printed p.~4) \\
 Benedetti, Ventura, Marinari, Ruocco, Zamponi 2022
 \supercite{benedetti2022supervised} & zero: Hebbian \(J_{ii} = 0\), reset
 to 0 after each unlearning step; ``autapses'' absent & Eq. (3), p.~1;
@@ -391,7 +414,7 @@ Eq. (9), p.~3; p.~9 \\
 Alemanno 2026 \supercite{alemanno2026attention} & zero in the pairwise
 model; in the exponential model the self-coupling, ``the
 exponential-model analogue of the diagonal term \(J_{ii}\)'', is kept &
-Definition 2, p.~3; p.~6; p.~7 \\
+Definition 3, p.~3; p.~6; p.~7 \\
 Barra 2008 \supercite{barra2008thesis} & diagonal terms added to a cavity
 Hamiltonian give a contribution independent of the spins that vanishes
 after the disorder average (equilibrium, no dynamics) & Eq. (3.134),
@@ -401,7 +424,9 @@ compared with zero for the Hebbian kernel (one-step stability of stored
 patterns) & pp.~3, 6 \\
 Vinci, Galluzzi, Mattia 2025 \supercite{vinci2025beyond} & kept
 (\(J_{ii} = g\alpha\)), compared with zero for the Hebbian kernel
-(graded units) & Fig. 3, p.~5; Fig. 7, p.~9 \\
+(graded units); recall criterion \(\lvert m_1\rvert > 5\sqrt{v/N}\), not
+comparable with ours; cite the replicated article as made unnecessary by
+autapses & Fig. 3, p.~5; p.~6; Fig. 7, p.~9; p.~10 \\
 \end{longtable}
 
 \section{Results}\label{results}
@@ -780,9 +805,11 @@ diagonal kept (D4) & 200--209 & 0.251 {[}0.246, 0.256{]} & 0.477
 nor refuted under rule C1 \\
 \end{longtable}
 
-Note to the table: a mixed ratio, the kept-diagonal dreamed capacity
-over the zero-diagonal Hebbian baseline, is 3.05 {[}3.00, 3.09{]}; it
-corresponds to no published protocol and is given for completeness only.
+Note to the table: the Hebb value 0.251 for the kept diagonal is the
+mean over seeds; the median is 0.250, and it is the median that the data
+file carries. A mixed ratio, the kept-diagonal dreamed capacity over the
+zero-diagonal Hebbian baseline, is 3.05 {[}3.00, 3.09{]}; it corresponds
+to no published protocol and is given for completeness only.
 Student-\(t\) intervals, as quoted in our comment on the submission
 issue, are {[}1.85, 1.96{]} for the kept-diagonal ratio and {[}2.99,
 3.10{]} for the mixed one. For the kept-diagonal convention the lower
