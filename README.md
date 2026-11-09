@@ -10,12 +10,14 @@ $N = 1\,000$ studies.
 Author: Clément Saillant (Hypneum Lab, ORCID
 [0000-0002-8414-185X](https://orcid.org/0000-0002-8414-185X)).
 Status: **submission package frozen on 2026-10-31** (tag `submission-20261031`); submitted to ReScience C as [ReScience/submissions#147](https://github.com/ReScience/submissions/issues/147) on 2026-10-31.
-Version 2 (branch `v2-diagonal`, draft): adds the post-freeze, pre-registered
+Version 2 (merged on 2026-11-08, #8): adds the post-freeze, pre-registered
 self-coupling ablation (convention table, Figure 3, three references); every
 number of the frozen package is unchanged.
 
 Headline: dreaming at $t = 10$ multiplies the empirical capacity by
-3.86 [3.79, 3.93] at $N = 1\,000$ (confirmed), 9.06 [8.84, 9.29] on correlated
+3.86 [3.79, 3.93] at $N = 1\,000$ with the self-coupling set to zero
+(confirmed; 1.90 [1.86, 1.95] with the diagonal kept, see "Self-coupling
+convention"), 9.06 [8.84, 9.29] on correlated
 patterns with ancestor overlap $m = 0.15$ (confirmed), and the $m = 0.30$
 level carries its registered C1 label (ratio 44.38 [42.56, 46.97], Hebbian
 crossings inside the first load interval 0.01–0.02, grid-sensitive
